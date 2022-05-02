@@ -19,7 +19,7 @@ class PrusaGCodeParser(GCodeSource):
         if self.large_preview is not None:
             im = self.large_preview.convert("RGBA")
             data = im.tobytes("raw","RGBA")
-            qim = QImage(data, im.size[0], im.size[1], QImage.Format_ARGB32)
+            qim = QImage(data, im.size[0], im.size[1], QImage.Format.Format_ARGB32)
             return QPixmap.fromImage(qim)
         return None
 

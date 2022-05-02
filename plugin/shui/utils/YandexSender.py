@@ -53,7 +53,7 @@ class YandexSender(NetworkSender):
 
     def handleResponse(self):
         er = self.reply.error()
-        if er == QNetworkReply.NoError:
+        if er == QNetworkReply.NetworkError.NoError:
             if self.phase==YaPhase.REQUEST_URL:
                 self.app.onMessage.emit("Prepared")
                 jresp=json.loads(str(self.reply.readAll(), 'utf-8'))

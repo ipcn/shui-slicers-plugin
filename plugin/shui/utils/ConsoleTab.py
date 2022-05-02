@@ -11,7 +11,7 @@ class ConsoleTab(UiTab):
         self.app.onUartMessage.connect(self.addRow)
         self.app.onUartConnect.connect(self.onUartConnect)
         self.rows=[]
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
@@ -22,7 +22,7 @@ class ConsoleTab(UiTab):
 
         self.teConsoleOutput.setStyleSheet("*{background-color: black; color:rgb(0,255,0)}")
         self.slGCodeMessage = QtWidgets.QLineEdit(self)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.slGCodeMessage.sizePolicy().hasHeightForWidth())

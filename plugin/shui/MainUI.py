@@ -203,4 +203,4 @@ def qt_application(startMode):
     import sys
     application = QtWidgets.QApplication(sys.argv)
     form = makeForm(startMode)
-    sys.exit(application.exec_())
+    sys.exit(application.exec())
