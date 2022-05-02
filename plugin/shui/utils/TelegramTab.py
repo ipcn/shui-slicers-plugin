@@ -18,7 +18,7 @@ class TelegramTab(UiTab):
         self.teConsoleOutput.setStyleSheet("*{background-color: black; color:rgb(255,255,0)}")
         self.slGCodeMessage = QtWidgets.QLineEdit(self)
 
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.slGCodeMessage.sizePolicy().hasHeightForWidth())

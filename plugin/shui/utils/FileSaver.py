@@ -37,7 +37,7 @@ class FileSaver(GCodeSaver):
     def save(self, rows):
         from PyQt5 import QtWidgets
         options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        options |= QtWidgets.QFileDialog.Option.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", None, "All Files (*);;GCODE Files (*.gco)", options=options)
         if fileName:
             try:

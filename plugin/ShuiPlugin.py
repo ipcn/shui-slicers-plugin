@@ -38,3 +38,11 @@ class ShuiPlugin(OutputDevicePlugin):
     def __init__(self):
         super().__init__()
         self.getOutputDeviceManager().addOutputDevice(NetOutputDevice())
+
+    def start(self):
+        Logger.log("w", "ShuiPlugin started")
+        pass
+
+    def stop(self):
+        Logger.log("w", "ShuiPlugin stopped")
+        pass

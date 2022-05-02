@@ -55,7 +55,7 @@ class AlisaTab(UiTab):
         def handleResponse():
             import json
             er = self.reply.error()
-            if er == QNetworkReply.NoError:
+            if er == QNetworkReply.NetworkError.NoError:
                 jresp=json.loads(bytes(self.reply.readAll()).decode())
                 if "scenarios" in jresp:
                     self.addScenarioButtons(jresp["scenarios"])
@@ -83,7 +83,7 @@ class AlisaTab(UiTab):
         def handleResponse():
             import json
             er = self.reply.error()
-            if er == QNetworkReply.NoError:
+            if er == QNetworkReply.NetworkError.NoError:
                 jresp=json.loads(bytes(self.reply.readAll()).decode())
                 self.addRow(json.dumps(jresp))
             self.req=None

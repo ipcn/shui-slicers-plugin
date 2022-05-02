@@ -78,25 +78,28 @@ class FileTab(UiTab):
         else:
             menu=QtWidgets.QMenu(self)
 
-            newAct = QtWidgets.QAction(self.app.lang["save-to-file"], menu)
+            newAct = QtWidgets.QWidgetAction(menu)
+            newAct.setText(self.app.lang["save-to-file"])
             newAct.triggered.connect(self.onSaveToFile)
             menu.addAction(newAct)
 
-            newAct = QtWidgets.QAction(self.app.lang["send-to-printer"], menu)
+            newAct = QtWidgets.QWidgetAction(menu)
+            newAct.setText(self.app.lang["send-to-printer"])
             newAct.triggered.connect(self.onSendToWifi)
             menu.addAction(newAct)
 
             yandex_config=self.app.config.get("yandex")
             if yandex_config and (yandex_config.get("key")!=""):
-                newAct = QtWidgets.QAction(self.app.lang["send-to-yandex"], menu)
+                newAct = QtWidgets.QWidgetAction(menu)
+                newAct.setText(self.app.lang["send-to-yandex"])
                 newAct.triggered.connect(self.onSendToYandexDisk)
                 menu.addAction(newAct)
 
-            menu.exec_(self.mapToGlobal(self.okButton.pos()))
+            menu.exec(self.mapToGlobal(self.okButton.pos()))
 
     def onProgress(self, current, max):
-        self.progress.setMaximum(max)
-        self.progress.setValue(current)
+        self.progress.setMaximum(int(max))
+        self.progress.setValue(int(current))
         pass
 
     def onMessage(self, message):
@@ -132,7 +135,7 @@ class FileTab(UiTab):
             from .WifiSender import WifiSender
             wifiSender=WifiSender(self.app, self.leFileName.text())
             self.lockUILock(True)
-            wifiSender.save(self.parser.getProcessedGcode(), start=self.cbStartPrinting.checkState()==QtCore.Qt.Checked)
+            wifiSender.save(self.parser.getProcessedGcode(), start=self.cbStartPrinting.checkState()==QtCore.Qt.CheckState.Checked)
             self.sender=wifiSender
         except Exception as e:
             self.onMessage(str(e))

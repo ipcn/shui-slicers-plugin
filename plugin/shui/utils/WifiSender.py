@@ -24,9 +24,9 @@ class WifiSender(NetworkSender):
                 request.setRawHeader(b'Content-Type', b'application/octet-stream')
                 request.setRawHeader(b'File-Name', self.fileName.encode())
             else:
-                post_data = QHttpMultiPart(QHttpMultiPart.FormDataType)
+                post_data = QHttpMultiPart(QHttpMultiPart.ContentType.FormDataType)
                 part = QHttpPart()
-                part.setHeader(QNetworkRequest.ContentDispositionHeader,
+                part.setHeader(QNetworkRequest.KnownHeaders.ContentDispositionHeader,
                                "form-data; name=\"file\"; filename=\"%s\"" % self.fileName)
                 part.setBody(rows)
                 post_data.append(part)
@@ -34,7 +34,7 @@ class WifiSender(NetworkSender):
             self.postData=post_data
 
             proxy=QNetworkProxy()
-            proxy.setType(QNetworkProxy.NoProxy)
+            proxy.setType(QNetworkProxy.ProxyType.NoProxy)
             self.app.networkManager.setProxy(proxy)
             self.reply = self.app.networkManager.post(request, post_data)
             self.reply.finished.connect(self.handleResponse)
@@ -50,7 +50,7 @@ class WifiSender(NetworkSender):
 
     def handleResponse(self):
         er = self.reply.error()
-        if er == QNetworkReply.NoError:
+        if er == QNetworkReply.NetworkError.NoError:
             self.app.onMessage.emit("Success")
         else:
             self.app.onMessage.emit("{0} {1}:{2}".format("Error", er, self.reply.errorString()))
