@@ -4,9 +4,9 @@ from sys import argv
 import json
 
 from PyQt5 import (QtCore, QtWidgets)
-from .utils import (ConnectionThread, Core, ConsoleTab, FileTab, PrinterControlTab, TelegramTab, AlisaTab)
+from .utils import (ConnectionThread, Core, SetupDialog, ConsoleTab, FileTab, PrinterControlTab, TelegramTab, AlisaTab)
+from .Version import (Version)
 from PyQt5.QtNetwork import (QNetworkAccessManager, QNetworkProxy)
-
 
 class App(QtCore.QObject):
     wifiUart=None
@@ -26,14 +26,16 @@ class App(QtCore.QObject):
     def __init__(self, appStartMode, **kwargs):
         super().__init__()
         self.startMode=appStartMode
+        self.inputFileName=None
         if appStartMode==Core.StartMode.PRUSA:
             self.startMode = Core.StartMode.PRUSA
             self.outputFileName = os.getenv('SLIC3R_PP_OUTPUT_NAME')
             if self.outputFileName is not None:
                 self.outputFileName=os.path.basename(self.outputFileName)
-            self.inputFileName=sys.argv[1]
+            if len(sys.argv) > 1:
+                self.inputFileName=sys.argv[1]
         elif appStartMode==Core.StartMode.STANDALONE:
-            if len(argv)>1:
+            if len(sys.argv) > 1:
                 self.inputFileName=sys.argv[1]
             pass
         elif appStartMode==Core.StartMode.CURA:
@@ -45,21 +47,20 @@ class App(QtCore.QObject):
         if self.outputFileName is None:
             self.outputFileName = os.path.basename(self.inputFileName)
         self.wifiUart = ConnectionThread(self)
-        config_file="config_local.json" if os.getenv('USER')=='shubin' else "config.json"
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", config_file), encoding="utf-8") as jf:
-            self.config=json.load(jf)
-            jf.close()
 
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"langs.json"), encoding="utf-8") as lf:
-            langs_cfg=json.load(lf)
-            lf.close()
+        config_file_name="config_local.json" if os.getenv('USER')=='shubin' else "config.json"
+        self.config_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", config_file_name)
+        self.config = self.loadConfig()
+
+        self.lang_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"langs.json")
+        self.langs_cfg = self.loadLang()
 
         selected=self.config["language"]
         self.lang={}
-        if "inherited" in langs_cfg[selected]:
-            for inh in langs_cfg[selected]["inherited"]:
-                self.lang=langs_cfg[inh]["lang"]
-        self.lang.update(langs_cfg[selected]["lang"])
+        if "inherited" in self.langs_cfg[selected]:
+            for inh in self.langs_cfg[selected]["inherited"]:
+                self.lang=self.langs_cfg[inh]["lang"]
+        self.lang.update(self.langs_cfg[selected]["lang"])
 
         self.proxy=QNetworkProxy()
 
@@ -78,41 +79,78 @@ class App(QtCore.QObject):
 
         self.networkManager = QNetworkAccessManager()
         self.networkManager.setProxy(self.proxy)
+        self.mainWidget = None
 
         pass
 
     def selectFile(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open file", None, "All Files (*);;GCODE Files (*.gco)", options=options)
+#        options = QtWidgets.QFileDialog.Options()
+        options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, "Open file", None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
         if fileName:
             self.inputFileName=fileName
             self.outputFileName = os.path.basename(self.inputFileName)
             return True
         return False
 
+    def getLang(self, text):
+        if text and self.lang and text in self.lang:
+            return self.lang[text]
+        return text
+
+    def makePrinterItem(self, p):
+        item = "{} ({})".format(p.get("name", "?"), p.get("ip", "?"))
+#        if p.get("esp32", False):
+#            item += " / " + self.getLang("esp32")
+        return item
+
+    def loadLang(self):
+        with open(self.lang_file, encoding="utf-8") as lf:
+            langs_cfg=json.load(lf)
+            lf.close()
+            return langs_cfg
+
+    def loadConfig(self):
+        with open(self.config_file, encoding="utf-8") as jf:
+            cfg=json.load(jf)
+            jf.close()
+            return cfg
+
+    def saveConfig(self):
+        with open(self.config_file, "w", encoding="utf-8") as jf:
+            json.dump(self.config, jf, indent=4, ensure_ascii=False)
+            jf.close()
+        pass
+
+    def onUpdateConfig(self):
+        self.saveConfig()
+        if self.mainWidget:
+            self.mainWidget.updatePrinters()
 
 class MainWidget(QtWidgets.QDialog):
     def __init__(self, app):
         super().__init__()
         self.app=app
-        self.setWindowTitle(self.app.lang["title"])
+        self.app.mainWidget = self
+        self.title = "{} (v{})".format(self.app.getLang("title"), Version.version)
+        self.setWindowTitle(self.title)
         self.setFixedWidth(500)
         self.setFixedHeight(300)
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.mainLayout.setContentsMargins(2, 2, 2, 2)
         self.mainLayout.setSpacing(0)
+
         self.printerSelectLayout = QtWidgets.QHBoxLayout()
         self.cbPrinterSelect = QtWidgets.QComboBox(self)
-        pn=[]
-        for p in self.app.config["printers"]:
-            pn.append(p["name"])
-        self.cbPrinterSelect.addItems(pn)
         self.cbPrinterSelect.currentIndexChanged.connect(self.printerChanged)
-
+        self.updatePrinters()
 
         self.btConnect = QtWidgets.QPushButton(self)
         self.btConnect.setMaximumSize(QtCore.QSize(100, 16777215))
+
+        self.btSetup = QtWidgets.QPushButton(self)
+        self.btSetup.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.btSetup.setText(self.app.getLang("setup"))
 
         self.btClose = QtWidgets.QPushButton(self)
         self.btClose.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -120,6 +158,7 @@ class MainWidget(QtWidgets.QDialog):
 
         self.printerSelectLayout.addWidget(self.cbPrinterSelect)
         self.printerSelectLayout.addWidget(self.btConnect)
+        self.printerSelectLayout.addWidget(self.btSetup)
         self.printerSelectLayout.addWidget(self.btClose)
 
         self.printerSelectLayout.setContentsMargins(2, 2, 2, 2)
@@ -132,6 +171,7 @@ class MainWidget(QtWidgets.QDialog):
 
         self.makeTabs()
 
+        self.btSetup.clicked.connect(self.doSetup)
         self.btConnect.clicked.connect(self.doConnect)
         self.btClose.clicked.connect(self.doClose)
         self.app.onUartConnect.connect(self.doOnConnect)
@@ -162,16 +202,20 @@ class MainWidget(QtWidgets.QDialog):
         self.tabWidget.addTab(tab, tab.title)
 
         tg_config=self.app.config.get("telegram")
-        if tg_config and (tg_config.get("key")!="") and (tg_config.get("chat_id")!=""):
+        if tg_config and tg_config.get("enabled", False) and tg_config.get("key") and tg_config.get("chat_id"):
                 tab = TelegramTab(self.app)
                 self.tabs.append(tab)
                 self.tabWidget.addTab(tab, tab.title)
         yandex_config=self.app.config.get("yandex")
-        if yandex_config and (yandex_config.get("key")!=""):
+        if yandex_config and yandex_config.get("enabled", False) and yandex_config.get("key"):
             tab = AlisaTab(self.app)
             self.tabs.append(tab)
             self.tabWidget.addTab(tab, tab.title)
         pass
+
+    def doSetup(self):
+        dialog = SetupDialog(self, self.app) 
+        dialog.exec()
 
     def doConnect(self):
         if self.app.wifiUart.connected:
@@ -186,14 +230,32 @@ class MainWidget(QtWidgets.QDialog):
         else:
             self.btConnect.setText(self.app.lang["connect"])
 
+    def updatePrinters(self):
+        printers = self.app.config.get("printers", [])
+        items = [self.app.makePrinterItem(p) for p in printers]
+        idx = self.app.selectedPrinter
+        self.cbPrinterSelect.clear()
+        self.cbPrinterSelect.addItems(items)
+        if (idx < 0):
+            idx = 0
+        if (idx >= len(printers)):
+            idx = len(printers) - 1
+        self.app.selectedPrinter = idx
+        self.cbPrinterSelect.setCurrentIndex(idx)
+        pass
+
     def printerChanged(self, index):
-        self.app.selectedPrinter = index
+        if index >= 0:
+            self.app.selectedPrinter = index
         pass
 
 def makeForm(startMode, **kwargs):
     app=App(startMode, **kwargs)
     form = MainWidget(app)
     form.show()
+    printers = app.config.get("printers", [])
+    if len(printers) <= 0:
+        form.doSetup() 
     return form
 
 def cura_application(**kwargs):

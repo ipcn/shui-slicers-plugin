@@ -10,7 +10,9 @@ class TgClient(QtCore.QThread):
 
     def __init__(self, app):
         QtCore.QThread.__init__(self)
-        self.tg_url="https://api.telegram.org/bot"+app.config["telegram"]["key"]+"/"
+        self.tg_config = app.config.get("telegram")
+        self.tg_key = self.tg_config.get("key", "-");
+        self.tg_url="https://api.telegram.org/bot"+self.tg_key+"/"
         self.app=app
 
     def transac(self, method, data):
@@ -32,10 +34,15 @@ class TgClient(QtCore.QThread):
         pooling_data={"limit":1, "offset":-1, "timeout":120}
         while True:
             resp_json = self.transac("getUpdates", pooling_data)
-            for result_json in resp_json["result"]:
-                pooling_data["offset"]=result_json["update_id"]+1
-                if result_json["message"]:
-                    self.on_message(result_json["message"])
+            result = resp_json.get("result")
+            if result:
+              for result_json in result:
+                update_id = result_json.get("update_id")
+                if update_id is not None:
+                    pooling_data["offset"]=update_id+1
+                message = result_json.get("message")
+                if message:
+                    self.on_message(message)
         pass
 
 class TelegramTab(UiTab):
@@ -45,6 +52,7 @@ class TelegramTab(UiTab):
     def __init__(self, app):
         super().__init__(app)
         self.title = self.app.lang["telegram"]
+        self.tg_config = app.config.get("telegram")
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)
         self.teConsoleOutput.setReadOnly(True)
@@ -108,7 +116,8 @@ class TelegramTab(UiTab):
         pass
 
     def __del__(self):
-        self.tg.kill()
+        if self.tg:
+            self.tg.kill()
         pass
 
     def keyPressEvent(self, event):
@@ -127,7 +136,7 @@ class TelegramTab(UiTab):
     def doSend(self):
         text=self.slGCodeMessage.text()
         if (len(text)>0):
-            self.tg.transac("sendMessage", {"chat_id":self.app.config["telegram"]["chat_id"], "text":text})
+            self.tg.transac("sendMessage", {"chat_id":self.tg_config.get("chat_id"), "text":text})
             self.slGCodeMessage.setSelection(0, len(text))
             self.addRow(text)
         pass
@@ -137,5 +146,3 @@ class TelegramTab(UiTab):
             self.doSend()
             return True
         return False
-
-
