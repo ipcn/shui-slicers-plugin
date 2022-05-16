@@ -89,7 +89,8 @@ class FileTab(UiTab):
             menu.addAction(newAct)
 
             yandex_config=self.app.config.get("yandex")
-            if yandex_config and (yandex_config.get("key")!=""):
+            if yandex_config and (yandex_config.get("key")!="") \
+                    and yandex_config.get("enabled", True):
                 newAct = QtWidgets.QWidgetAction(menu)
                 newAct.setText(self.app.lang["send-to-yandex"])
                 newAct.triggered.connect(self.onSendToYandexDisk)

@@ -11,6 +11,7 @@ class TelegramTab(UiTab):
     def __init__(self, app):
         super().__init__(app)
         self.title = self.app.lang["telegram"]
+        self.tg_config = app.config.get("telegram")
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)
         self.teConsoleOutput.setReadOnly(True)
@@ -54,7 +55,7 @@ class TelegramTab(UiTab):
 
     def pooling(self):
         import json
-        tg_url="https://api.telegram.org/bot"+self.app.config["telegram"]["key"]+"/getUpdates"
+        tg_url="https://api.telegram.org/bot"+self.tg_config.get("key")+"/getUpdates"
         self.req=QNetworkRequest(QtCore.QUrl(tg_url))
         self.req.setRawHeader(b'Content-Type', b'application/json')
         post_data=json.dumps(self.pooling_data).encode("utf-8")
@@ -101,7 +102,8 @@ class TelegramTab(UiTab):
         pass
 
     def __del__(self):
-        #self.tg.kill()
+#        if self.tg:
+#            self.tg.kill()
         pass
 
     def keyPressEvent(self, event):
@@ -120,10 +122,10 @@ class TelegramTab(UiTab):
     def doSend(self):
         text=self.slGCodeMessage.text()
         if (len(text)>0):
-            tg_url="https://api.telegram.org/bot"+self.app.config["telegram"]["key"]+"/sendMessage"
+            tg_url="https://api.telegram.org/bot"+self.tg_config.get("key")+"/sendMessage"
             self.req_sm=QNetworkRequest(QtCore.QUrl(tg_url))
             self.req_sm.setRawHeader(b'Content-Type', b'application/json')
-            post_data=json.dumps({"chat_id":self.app.config["telegram"]["chat_id"], "text":text}).encode("utf-8")
+            post_data=json.dumps({"chat_id":self.tg_config.get("chat_id"), "text":text}).encode("utf-8")
             self.reply_sm = self.app.networkManager.post(self.req_sm, post_data)
 
             def handleResponse():
@@ -143,5 +145,3 @@ class TelegramTab(UiTab):
             self.doSend()
             return True
         return False
-
-

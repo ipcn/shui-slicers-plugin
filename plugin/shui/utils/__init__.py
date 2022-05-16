@@ -1,3 +1,4 @@
+from .SetupDialog import SetupDialog
 from .FileTab import FileTab
 from .ConsoleTab import ConsoleTab
 from .PrinterControlTab import PrinterControlTab
