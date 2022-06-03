@@ -3,10 +3,10 @@ import sys
 from sys import argv
 import json
 
-from PyQt5 import (QtCore, QtWidgets)
+from PyQt6 import (QtCore, QtWidgets)
 from .utils import (ConnectionThread, Core, SetupDialog, ConsoleTab, FileTab, PrinterControlTab, TelegramTab, AlisaTab)
 from .Version import (Version)
-from PyQt5.QtNetwork import (QNetworkAccessManager, QNetworkProxy)
+from PyQt6.QtNetwork import (QNetworkAccessManager, QNetworkProxy)
 
 class App(QtCore.QObject):
     wifiUart=None

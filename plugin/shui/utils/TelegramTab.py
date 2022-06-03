@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore, QtWidgets)
+from PyQt6 import (QtCore, QtWidgets)
 import requests
 import json
 from .Core import (StartMode, UiTab)

@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore)
+from PyQt6 import (QtCore)
 
 
 class GCodeSaver(QtCore.QObject):
@@ -35,7 +35,7 @@ class NetworkSender(GCodeSaver):
 class FileSaver(GCodeSaver):
 
     def save(self, rows):
-        from PyQt5 import QtWidgets
+        from PyQt6 import QtWidgets
 #        options = QtWidgets.QFileDialog.Options()
         options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
         fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)

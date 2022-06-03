@@ -2,7 +2,7 @@ import re
 from PIL import Image
 import base64
 from io import BytesIO
-from PyQt5.QtGui import (QPixmap, QImage)
+from PyQt6.QtGui import (QPixmap, QImage)
 from .Core import GCodeSource
 
 class PrusaGCodeParser(GCodeSource):
