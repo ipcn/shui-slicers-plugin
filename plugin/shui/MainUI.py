@@ -4,7 +4,7 @@ from sys import argv
 import json
 
 from PyQt5 import (QtCore, QtWidgets)
-from .utils import (ConnectionThread, Core, ConsoleTab, FileTab, PrinterControlTab, TelegramTab)
+from .utils import (ConnectionThread, Core, ConsoleTab, FileTab, PrinterControlTab, TelegramTab, AlisaTab)
 from PyQt5.QtNetwork import (QNetworkAccessManager, QNetworkProxy)
 
 
@@ -139,7 +139,7 @@ class MainWidget(QtWidgets.QDialog):
         pass
 
     def tabChanged(self, index):
-        self.btConnect.setVisible(index!=0)
+        self.btConnect.setVisible(self.tabs[index].view_connect)
         pass
 
     def doClose(self):
@@ -166,6 +166,11 @@ class MainWidget(QtWidgets.QDialog):
                 tab = TelegramTab(self.app)
                 self.tabs.append(tab)
                 self.tabWidget.addTab(tab, tab.title)
+        yandex_config=self.app.config.get("yandex")
+        if yandex_config and (yandex_config.get("key")!=""):
+            tab = AlisaTab(self.app)
+            self.tabs.append(tab)
+            self.tabWidget.addTab(tab, tab.title)
         pass
 
     def doConnect(self):

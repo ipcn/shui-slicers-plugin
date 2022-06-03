@@ -1,10 +1,11 @@
 from PyQt5 import (QtCore, QtWidgets)
+from .Core import (StartMode, UiTab)
 
 
-class ConsoleTab(QtWidgets.QWidget):
+class ConsoleTab(UiTab):
     def __init__(self, app):
-        super().__init__()
-        self.app = app
+        super().__init__(app)
+        self.view_connect = True
         self.title = self.app.lang["terminal"]
         self.app.onUartRow.connect(self.addRow)
         self.app.onUartMessage.connect(self.addRow)

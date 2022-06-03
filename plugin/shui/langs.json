@@ -4,6 +4,7 @@
     "lang": {
       "close": "Закрыть",
       "send": "Отправить",
+      "reload": "Обновить",
       "connect": "Подключить",
       "disconnect": "Отключить",
       "select": "Выбрать",
@@ -12,6 +13,7 @@
       "terminal": "Терминал",
       "printer": "Принтер",
       "telegram": "Телеграм",
+      "alisa": "Алиса",
 
       "start-printing": "Запустить печать",
       "output-name": "Файл",
@@ -32,6 +34,7 @@
       "title": "SHUI Wifi Plugin",
       "close": "Close",
       "send": "Send",
+      "reload": "Reload",
       "select": "Select",
       "connect": "Connect",
       "disconnect": "Disconnect",
@@ -40,6 +43,7 @@
       "terminal": "Terminal",
       "printer": "Printer",
       "telegram": "Telegram",
+      "alisa": "Alisa",
       "telegram-bot-welcome": "Telegram bot console",
 
       "start-printing": "Start printing",

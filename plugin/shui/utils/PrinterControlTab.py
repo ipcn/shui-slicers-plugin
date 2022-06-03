@@ -1,12 +1,13 @@
 from PyQt5 import (QtCore, QtWidgets)
 from .controls import GCodeActionsControl
+from .Core import (StartMode, UiTab)
 import re
 
-class PrinterControlTab(QtWidgets.QWidget):
+class PrinterControlTab(UiTab):
     rows=[]
     def __init__(self, app):
-        super().__init__()
-        self.app = app
+        super().__init__(app)
+        self.view_connect = True
         self.uartControls=[]
         self.app.onUartRow.connect(self.addRow)
         self.app.onUartMessage.connect(self.addRow)

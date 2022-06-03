@@ -1,6 +1,7 @@
 from PyQt5 import (QtCore, QtWidgets)
 import requests
 import json
+from .Core import (StartMode, UiTab)
 
 
 class TgClient(QtCore.QThread):
@@ -37,30 +38,25 @@ class TgClient(QtCore.QThread):
                     self.on_message(result_json["message"])
         pass
 
-class TelegramTab(QtWidgets.QWidget):
+class TelegramTab(UiTab):
     rows = []
     tg = None
 
     def __init__(self, app):
-        super().__init__()
-        self.app = app
+        super().__init__(app)
         self.title = self.app.lang["telegram"]
-
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy)
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)
         self.teConsoleOutput.setReadOnly(True)
 
         self.teConsoleOutput.setStyleSheet("*{background-color: black; color:rgb(255,255,0)}")
         self.slGCodeMessage = QtWidgets.QLineEdit(self)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.slGCodeMessage.sizePolicy().hasHeightForWidth())
+
         self.slGCodeMessage.setSizePolicy(sizePolicy)
         self.teConsoleOutput.setSizePolicy(sizePolicy)
 

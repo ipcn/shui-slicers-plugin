@@ -1,13 +1,12 @@
 from PyQt5 import (QtCore, QtWidgets, QtGui)
-from .Core import StartMode
+from .Core import (StartMode, UiTab)
 
-class FileTab(QtWidgets.QWidget):
+class FileTab(UiTab):
     parser = None
     locked = False
 
     def __init__(self, app):
-        super().__init__()
-        self.app=app
+        super().__init__(app)
         self.title = self.app.lang["file"]
         self.app.onUploadFinished.connect(self.onFinised)
         self.app.onProgress.connect(self.onProgress)
@@ -23,7 +22,7 @@ class FileTab(QtWidgets.QWidget):
         self.cbStartPrinting.setChecked(True)
 
         self.leFileName = QtWidgets.QLineEdit()
-        self.leFileName.setMaxLength(32)
+        self.leFileName.setMaxLength(64)
 
         self.progress=QtWidgets.QProgressBar()
         self.progress.setMaximum(100)
