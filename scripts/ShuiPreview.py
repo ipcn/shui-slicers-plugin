@@ -1,6 +1,6 @@
 from ..Script import Script
 from cura.Snapshot import Snapshot
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 import os
 import base64
 
