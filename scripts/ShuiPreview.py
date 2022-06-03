@@ -41,7 +41,7 @@ class ShuiPreview(Script):
 
   def addScreenshot(self, img, width, height, img_type):
     result = ""
-    b_image = img.scaled(width, height, Qt.KeepAspectRatio)
+    b_image = img.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio)
     img_size = b_image.size()
     result += img_type
     datasize = 0
@@ -106,7 +106,7 @@ class ShuiPreview(Script):
     
   def generate(self, img, size):
     result = ""
-    b_image = img.scaled(size, size, Qt.KeepAspectRatio)
+    b_image = img.scaled(size, size, Qt.AspectRatioMode.KeepAspectRatio)
     img_size = b_image.size()
     datasize = 0
     for i in range(img_size.height()):
