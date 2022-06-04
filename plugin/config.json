@@ -1,7 +1,5 @@
 {
   "printers":[
-    {"name":"Dev", "ip":"192.168.2.24", "esp32":true},
-    {"name":"Local:8081", "ip":"127.0.0.1", "esp32":true}
   ],
 
   "proxy": {"enabled":false, "host": "proxy.host.ru",  "port": 8080, "user": "user", "password": "user_password" },
