@@ -34,11 +34,11 @@ class NetworkSender(GCodeSaver):
 
 class FileSaver(GCodeSaver):
 
-    def save(self, rows):
+    def save(self, rows, filename = None):
         from PyQt5 import QtWidgets
 #        options = QtWidgets.QFileDialog.Options()
         options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
         if fileName:
             try:
                 i=0

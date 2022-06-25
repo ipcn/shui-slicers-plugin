@@ -1,3 +1,4 @@
+import os
 from PyQt5 import (QtCore, QtWidgets, QtGui)
 from .Core import (StartMode, UiTab)
 
@@ -110,9 +111,13 @@ class FileTab(UiTab):
     def onSaveToFile(self):
         try:
             self.onProgress(0, 1)
+            filename = self.leFileName.text()
+            if self.app.inputFileName:
+                dir = os.path.dirname(os.path.abspath(self.app.inputFileName))
+                filename = os.path.join(dir, filename)
             from .FileSaver import FileSaver
             fileSaver=FileSaver(self.app)
-            fileSaver.save(self.parser.getProcessedGcode())
+            fileSaver.save(self.parser.getProcessedGcode(), filename)
         except Exception as e:
             self.onMessage(str(e))
         pass
