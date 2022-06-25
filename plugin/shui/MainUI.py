@@ -5,12 +5,13 @@ import json
 
 from PyQt5 import (QtCore, QtWidgets)
 from .utils import (ConnectionThread, Core, SetupDialog, ConsoleTab, FileTab, PrinterControlTab, TelegramTab, AlisaTab)
-from .Version import (Version)
 from PyQt5.QtNetwork import (QNetworkAccessManager, QNetworkProxy)
 
 class App(QtCore.QObject):
     wifiUart=None
     config=None
+    plugin=None
+    version="?.?.?"
     selectedPrinter = 0
     startMode = Core.StartMode.UNKNOWN
     outputFileName=None
@@ -51,6 +52,12 @@ class App(QtCore.QObject):
         config_file_name="config_local.json" if os.getenv('USER')=='shubin' else "config.json"
         self.config_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", config_file_name)
         self.config = self.loadConfig()
+
+        plugin_file_name="plugin_local.json" if os.getenv('USER')=='shubin' else "plugin.json"
+        self.plugin_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", plugin_file_name)
+        self.plugin = self.loadPluginConfig()
+        if self.plugin and self.plugin.get("version"):
+            self.version = self.plugin.get("version")
 
         self.lang_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"langs.json")
         self.langs_cfg = self.loadLang()
@@ -110,6 +117,12 @@ class App(QtCore.QObject):
             lf.close()
             return langs_cfg
 
+    def loadPluginConfig(self):
+        with open(self.plugin_file, encoding="utf-8") as jf:
+            cfg=json.load(jf)
+            jf.close()
+            return cfg
+
     def loadConfig(self):
         with open(self.config_file, encoding="utf-8") as jf:
             cfg=json.load(jf)
@@ -132,7 +145,7 @@ class MainWidget(QtWidgets.QDialog):
         super().__init__()
         self.app=app
         self.app.mainWidget = self
-        self.title = "{} (v{})".format(self.app.getLang("title"), Version.version)
+        self.title = "{} (v{})".format(self.app.getLang("title"), self.app.version)
         self.setWindowTitle(self.title)
         self.setFixedWidth(500)
         self.setFixedHeight(300)
