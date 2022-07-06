@@ -1,6 +1,6 @@
 from .FileSaver import NetworkSender
-from PyQt5 import (QtCore)
-from PyQt5.QtNetwork import (QHttpMultiPart, QHttpPart, QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
+from ..PyQt_API import (QtCore)
+from ..PyQt_API import (QHttpMultiPart, QHttpPart, QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
 import requests
 
 class WifiSender(NetworkSender):

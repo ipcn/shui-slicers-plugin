@@ -1,7 +1,7 @@
-from PyQt5 import (QtCore, QtWidgets)
+from ..PyQt_API import (QtCore, QtWidgets)
 import json
 from .Core import (StartMode, UiTab)
-from PyQt5.QtNetwork import (QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
+from ..PyQt_API import (QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
 
 class TelegramTab(UiTab):
     rows = []
@@ -62,7 +62,7 @@ class TelegramTab(UiTab):
         self.reply = self.app.networkManager.post(self.req, post_data)
         def handleResponse():
             er = self.reply.error()
-            if er == QNetworkReply.NoError:
+            if er == QNetworkReply.NetworkError.NoError:
                 jresp=json.loads(bytes(self.reply.readAll()).decode())
                 for result_json in jresp["result"]:
                     self.pooling_data["offset"]=result_json["update_id"]+1

@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore)
+from ..PyQt_API import (QtCore)
 import socket
 
 class ConnectionThread(QtCore.QThread):

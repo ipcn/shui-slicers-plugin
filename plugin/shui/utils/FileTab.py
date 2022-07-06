@@ -1,5 +1,5 @@
 import os
-from PyQt5 import (QtCore, QtWidgets, QtGui)
+from ..PyQt_API import (QtCore, QtWidgets, QtGui)
 from .Core import (StartMode, UiTab)
 
 class FileTab(UiTab):

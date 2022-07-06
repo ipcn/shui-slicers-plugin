@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore, QtWidgets)
+from ..PyQt_API import (QtCore, QtWidgets)
 from .controls import GCodeActionsControl
 from .Core import (StartMode, UiTab)
 import re

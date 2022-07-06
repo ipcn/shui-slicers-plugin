@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from ...PyQt_API import QtCore, QtGui, QtWidgets
 
 
 class ShuiToolButton(QtWidgets.QToolButton):

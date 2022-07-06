@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore, QtWidgets)
+from ..PyQt_API import (QtCore, QtWidgets)
 from .Core import (StartMode, UiTab)
 
 

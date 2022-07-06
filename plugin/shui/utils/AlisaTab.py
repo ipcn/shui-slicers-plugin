@@ -1,5 +1,5 @@
-from PyQt5 import (QtCore, QtWidgets, QtGui)
-from PyQt5.QtNetwork import (QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
+from ..PyQt_API import (QtCore, QtWidgets, QtGui)
+from ..PyQt_API import (QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
 from .Core import (StartMode, UiTab)
 
 class AlisaTab(UiTab):

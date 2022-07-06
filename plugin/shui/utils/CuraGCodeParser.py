@@ -7,7 +7,7 @@ class CuraGCodeParser(GCodeSource):
         super().__init__()
 
     def parse(self):
-        from PyQt5.QtGui import QPixmap
+        from ..PyQt_API import QPixmap
         from cura.Snapshot import Snapshot
         self.large_preview = QPixmap.fromImage(Snapshot.snapshot(width = 200, height = 200))
         pass

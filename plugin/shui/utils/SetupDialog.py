@@ -1,4 +1,4 @@
-from PyQt5 import (QtCore, QtWidgets, QtGui)
+from ..PyQt_API import (QtCore, QtWidgets, QtGui)
 
 class SetupDialog(QtWidgets.QDialog):
     def __init__(self, parent, app):

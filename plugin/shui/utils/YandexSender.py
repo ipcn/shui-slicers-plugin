@@ -1,8 +1,8 @@
 from enum import Enum
 import json
 from .FileSaver import NetworkSender
-from PyQt5 import (QtCore)
-from PyQt5.QtNetwork import (QHttpMultiPart, QHttpPart, QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
+from ..PyQt_API import (QtCore)
+from ..PyQt_API import (QHttpMultiPart, QHttpPart, QNetworkRequest, QNetworkAccessManager, QNetworkReply, QNetworkProxy)
 
 
 class YaPhase(Enum):

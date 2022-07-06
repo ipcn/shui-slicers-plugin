@@ -1,5 +1,5 @@
 from enum import Enum
-from PyQt5 import (QtCore, QtWidgets, QtGui)
+from ..PyQt_API import (QtCore, QtWidgets, QtGui)
 
 class StartMode(Enum):
     UNKNOWN = 0
