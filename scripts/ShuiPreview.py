@@ -1,8 +1,12 @@
 from ..Script import Script
 from cura.Snapshot import Snapshot
-from PyQt5.QtCore import Qt
 import os
 import base64
+
+try:
+  from PyQt6.QtCore import Qt
+except Exception:
+  from PyQt5.QtCore import Qt
 
 class ShuiPreview(Script):
   def __init__(self):
