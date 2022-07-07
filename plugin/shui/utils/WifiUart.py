@@ -9,11 +9,13 @@ class ConnectionThread(QtCore.QThread):
     def __init__(self, app):
         QtCore.QThread.__init__(self)
         self.app=app
+        self.sock=None
 
     def send(self, message):
         message=message.replace('|', '\n')
         message=message+"\n\r"
-        self.sock.send(message.encode())
+        if self.sock:
+            self.sock.send(message.encode())
         pass
 
     def notifyConnect(self, c):

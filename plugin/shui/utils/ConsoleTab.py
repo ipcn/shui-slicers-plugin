@@ -76,5 +76,5 @@ class ConsoleTab(UiTab):
         pass
 
     def doSendKeyPress(self, event):
-        if (event.key() == QtCore.Qt.Key_Enter) or (event.key() == QtCore.Qt.Key_Return):
+        if (event.key() == QtCore.Qt.Key.Key_Enter) or (event.key() == QtCore.Qt.Key.Key_Return):
             self.doSend()
