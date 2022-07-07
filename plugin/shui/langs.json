@@ -7,9 +7,10 @@
       "save": "Сохранить",
       "send": "Отправить",
       "reload": "Обновить",
+      "select": "Выбрать",
       "connect": "Подключить",
       "disconnect": "Отключить",
-      "select": "Выбрать",
+      "preview": "Превью",
 
       "setup": "Настройка",
       "file": "Файл",
@@ -52,6 +53,7 @@
       "select": "Select",
       "connect": "Connect",
       "disconnect": "Disconnect",
+      "preview": "Preview",
 
       "setup": "Setup",
       "file": "File",
@@ -72,7 +74,7 @@
       "printer-apply": "Apply",
       "printer-delete": "Delete",
 
-     "start-printing": "Start printing",
+      "start-printing": "Start printing",
       "output-name": "File",
 
       "save-to-file": "Save to file",

@@ -1,4 +1,5 @@
 from ..PyQt_API import (QtCore, QtWidgets, QtGui)
+from .Core import (PreviewModes)
 
 class SetupDialog(QtWidgets.QDialog):
     def __init__(self, parent, app):
@@ -13,12 +14,16 @@ class SetupDialog(QtWidgets.QDialog):
         self.printerIdx = 0
         self.printer = None
 
-        # languages
+        # languages & preview
         self.langsLabel = QtWidgets.QLabel(self.app.getLang("language"), owner)
         self.langsSelect = QtWidgets.QComboBox(owner)
+        self.previewLabel = QtWidgets.QLabel(self.app.getLang("preview"), owner)
+        self.previewSelect = QtWidgets.QComboBox(owner)
         langsLayout = QtWidgets.QHBoxLayout()
         langsLayout.addWidget(self.langsLabel)
         langsLayout.addWidget(self.langsSelect)
+        langsLayout.addWidget(self.previewLabel)
+        langsLayout.addWidget(self.previewSelect)
         langsLayout.addStretch()
 
         # printers list with buttons
@@ -35,6 +40,7 @@ class SetupDialog(QtWidgets.QDialog):
 
         editPrinterLayout = QtWidgets.QVBoxLayout()
         editPrinterLayout.addLayout(langsLayout)
+        editPrinterLayout.addStretch()
         editPrinterLayout.addWidget(self.printerLabel)
         editPrinterLayout.addWidget(self.nameEditInput)
         editPrinterAddrLayout = QtWidgets.QHBoxLayout()
@@ -43,7 +49,6 @@ class SetupDialog(QtWidgets.QDialog):
         editPrinterLayout.addLayout(editPrinterAddrLayout)
         editPrinterLayout.addWidget(self.savePrinterButton)
         editPrinterLayout.addWidget(self.delPrinterButton)
-        editPrinterLayout.addStretch()
 
         printersBoxLayout = QtWidgets.QHBoxLayout()
         printersBoxLayout.addLayout(printerListLayout)
@@ -126,17 +131,19 @@ class SetupDialog(QtWidgets.QDialog):
         cfg = {
             "printers": [],
             "language": "en",
+            "preview": "small",
             "proxy": {"enabled":False, "host":"host.proxy.ru", "port": 8080, "user": "user", "password":"password"},
             "yandex": {"enabled":False, "key":"key", "override":False},
             "telegram": {"enabled":False, "key":"key", "chat_id":"chat_id"},
         }
         if self.app.config:
-            printers = self.app.config.get("printers", [])
-            cfg["printers"] = [{"name": p["name"], "ip":p["ip"], "esp32":p["esp32"]} for p in printers]
-            for key in ["language", "proxy", "yandex", "telegram"]:
+            for key in cfg.keys():
                 val = self.app.config.get(key)
                 if val:
-                    cfg[key] = val
+                    if key == "printers":
+                        cfg[key] = [{k:p.get(k) for k in p.keys()} for p in val]
+                    else:
+                        cfg[key] = val
         return cfg
 
     def showError(self, text):
@@ -150,6 +157,16 @@ class SetupDialog(QtWidgets.QDialog):
         try:
             lang_idx = langs.index(lang)
             self.langsSelect.setCurrentIndex(lang_idx)
+        except:
+            pass
+
+        preview_modes = list(PreviewModes.keys())
+        preview_mode = self.config.get("preview", "small")
+        self.previewSelect.clear()
+        self.previewSelect.addItems(preview_modes)
+        try:
+            preview_idx = preview_modes.index(preview_mode)
+            self.previewSelect.setCurrentIndex(preview_idx)
         except:
             pass
 
@@ -177,6 +194,7 @@ class SetupDialog(QtWidgets.QDialog):
 
     def saveData(self):
         self.config["language"] = self.langsSelect.currentText()
+        self.config["preview"] = self.previewSelect.currentText()
 
         self.config["proxy"] = {
             "enabled": self.proxyCheck.isChecked(),

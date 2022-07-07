@@ -13,11 +13,9 @@ class FileTab(UiTab):
         self.app.onProgress.connect(self.onProgress)
         self.app.onMessage.connect(self.onMessage)
 
-
         self.bigPic = QtWidgets.QLabel()
         self.bigPic.setFixedWidth(200)
         self.bigPic.setFixedHeight(200)
-
 
         self.cbStartPrinting = QtWidgets.QCheckBox(self.app.lang["start-printing"])
         self.cbStartPrinting.setChecked(True)
@@ -115,21 +113,23 @@ class FileTab(UiTab):
             if self.app.inputFileName:
                 dir = os.path.dirname(os.path.abspath(self.app.inputFileName))
                 filename = os.path.join(dir, filename)
+            preview_mode = self.app.config.get("preview", "small")
             from .FileSaver import FileSaver
             fileSaver=FileSaver(self.app)
-            fileSaver.save(self.parser.getProcessedGcode(), filename)
+            fileSaver.save(self.parser.getProcessedGcode(preview_mode), filename)
         except Exception as e:
             self.onMessage(str(e))
         pass
 
     def onSendToYandexDisk(self):
         try:
+            preview_mode = self.app.config.get("preview", "small")
             self.onProgress(0, 1)
             from .YandexSender import YandexSender
             self.lockUILock(True)
             wifiSender=YandexSender(self.app, self.leFileName.text())
             self.sender=wifiSender
-            wifiSender.save(self.parser.getProcessedGcode())
+            wifiSender.save(self.parser.getProcessedGcode(preview_mode))
         except Exception as e:
             self.onMessage(str(e))
             self.onFinised(False)
@@ -137,11 +137,12 @@ class FileTab(UiTab):
 
     def onSendToWifi(self):
         try:
+            preview_mode = self.app.config.get("preview", "small")
             self.onProgress(0, 1)
             from .WifiSender import WifiSender
             wifiSender=WifiSender(self.app, self.leFileName.text())
             self.lockUILock(True)
-            wifiSender.save(self.parser.getProcessedGcode(), start=self.cbStartPrinting.checkState()==QtCore.Qt.CheckState.Checked)
+            wifiSender.save(self.parser.getProcessedGcode(preview_mode), start=self.cbStartPrinting.checkState()==QtCore.Qt.CheckState.Checked)
             self.sender=wifiSender
         except Exception as e:
             self.onMessage(str(e))

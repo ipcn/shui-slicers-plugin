@@ -3,7 +3,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 from ..PyQt_API import (QPixmap, QImage)
-from .Core import GCodeSource, PreviewGenerator
+from .Core import GCodeSource, PreviewGenerator, PreviewModes
 
 class PrusaGCodeParser(GCodeSource):
     large_preview=None
@@ -68,12 +68,13 @@ class PrusaGCodeParser(GCodeSource):
                 return False
         return True
 
-    def getProcessedGcode(self):
+    def getProcessedGcode(self, preview_mode):
         if self.gcode is None:
             return None
+        small_size = PreviewModes.get(preview_mode, 0)
         rows=[]
         filter_proc=self.dummy_filter
-        if (self.large_preview is not None) and (self.small_preview is not None):
+        if (small_size > 0) and (self.large_preview is not None) and (self.small_preview is not None):
             filter_proc=self.thumb_filter
             self.gen.generate_header(self.small_preview.width, self.small_preview.width, rows)
             self.gen.generate_image_preview(self.small_preview, rows)

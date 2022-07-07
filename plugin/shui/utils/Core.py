@@ -8,6 +8,11 @@ class StartMode(Enum):
     PRUSA = 2
     STANDALONE = 3
 
+PreviewModes = {
+    "none": 0,
+    "small": 50,
+    "big": 100
+}
 
 class UiTab(QtWidgets.QWidget):
     view_connect=False
@@ -29,7 +34,6 @@ class GCodeSource:
     def parse(self) -> None: ...
 
     def getLargePreview(self) -> None: ...
-
 
 class PreviewGenerator:
     def has_preview(self, rows):

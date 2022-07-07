@@ -1,7 +1,6 @@
-from .Core import GCodeSource, PreviewGenerator
+from .Core import GCodeSource, PreviewGenerator, PreviewModes
 
 class CuraGCodeParser(GCodeSource):
-    small_size = 50
     large_size = 200
     large_preview = None
     has_preview = False
@@ -27,14 +26,15 @@ class CuraGCodeParser(GCodeSource):
         from ..PyQt_API import QPixmap
         return QPixmap.fromImage(self.large_preview)
 
-    def getProcessedGcode(self):
-        if self.has_preview or (self.large_preview is None) or (self.gcode is None):
-            return self.gcode
-        else:
+    def getProcessedGcode(self, preview_mode):
+        small_size = PreviewModes.get(preview_mode, 0)
+        if not self.has_preview and (small_size > 0) \
+                and (self.large_preview is not None) and (self.gcode is not None):
             rows = []
-            self.gen.generate_header(self.small_size, self.small_size, rows)
-            self.gen.generate_qimage_preview(self.large_preview, self.small_size, rows)
+            self.gen.generate_header(small_size, small_size, rows)
+            self.gen.generate_qimage_preview(self.large_preview, small_size, rows)
             self.gen.generate_qimage_preview(self.large_preview, self.large_size, rows)
             for d in self.gcode:
                 rows.append(d)
             return rows
+        return self.gcode
