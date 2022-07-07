@@ -11,6 +11,8 @@
       "connect": "Подключить",
       "disconnect": "Отключить",
       "preview": "Превью",
+      "terminate": "Прервать",
+      "ok": "OK",
 
       "setup": "Настройка",
       "file": "Файл",
@@ -54,6 +56,8 @@
       "connect": "Connect",
       "disconnect": "Disconnect",
       "preview": "Preview",
+      "terminate": "Terminate",
+      "ok": "OK",
 
       "setup": "Setup",
       "file": "File",

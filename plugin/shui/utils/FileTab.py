@@ -29,7 +29,7 @@ class FileTab(UiTab):
 
         self.progress_label=QtWidgets.QLabel()
         self.progress_label.setText("---")
-        self.okButton = QtWidgets.QPushButton("OK")
+        self.okButton = QtWidgets.QPushButton(self.app.lang["ok"])
 
         mainLayout=QtWidgets.QHBoxLayout()
         self.setLayout(mainLayout)
@@ -151,9 +151,9 @@ class FileTab(UiTab):
 
     def lockUILock(self, locked):
         if locked:
-            self.okButton.setText("Terminate")
+            self.okButton.setText(self.app.lang["terminate"])
         else:
-            self.okButton.setText("Ok")
+            self.okButton.setText(self.app.lang["ok"])
         self.locked=locked
         pass
 
