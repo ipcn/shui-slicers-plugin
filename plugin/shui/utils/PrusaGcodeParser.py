@@ -3,7 +3,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 from ..PyQt_API import (QPixmap, QImage)
-from .Core import GCodeSource
+from .Core import GCodeSource, PreviewGenerator
 
 class PrusaGCodeParser(GCodeSource):
     large_preview=None
@@ -14,6 +14,7 @@ class PrusaGCodeParser(GCodeSource):
         self.gcode=None
         self.thumbs=[]
         self.fileName=fileName
+        self.gen = PreviewGenerator()
 
     def getLargePreview(self):
         if self.large_preview is not None:
@@ -67,23 +68,6 @@ class PrusaGCodeParser(GCodeSource):
                 return False
         return True
 
-    def generate_preview(self, preview, rows):
-        size=preview.width
-        index=0
-        row = bytearray()
-        for d in preview.getdata():
-            r=d[0]>>3
-            g=d[1]>>2
-            b=d[2]>>3
-            rgb = (r << 11) | (g << 5) | b
-            row.append((rgb >> 8) & 0xFF)
-            row.append(rgb & 0xFF)
-            index+=1
-            if (index==size):
-                index=0;
-                rows.append(";" + base64.b64encode(row).decode('utf-8') + "\n")
-                row = bytearray()
-
     def getProcessedGcode(self):
         if self.gcode is None:
             return None
@@ -91,9 +75,9 @@ class PrusaGCodeParser(GCodeSource):
         filter_proc=self.dummy_filter
         if (self.large_preview is not None) and (self.small_preview is not None):
             filter_proc=self.thumb_filter
-            rows.append(";SHUI PREVIEW {}x{}\n".format(self.small_preview.width, self.small_preview.width))
-            self.generate_preview(self.small_preview, rows)
-            self.generate_preview(self.large_preview, rows)
+            self.gen.generate_header(self.small_preview.width, self.small_preview.width, rows)
+            self.gen.generate_image_preview(self.small_preview, rows)
+            self.gen.generate_image_preview(self.large_preview, rows)
         index=0
         for d in self.gcode:
             if filter_proc(index):
