@@ -60,7 +60,7 @@ class FileTab(UiTab):
 
         self.okButton.clicked.connect(self.onOk)
 
-        if self.app.inputFileName is not None:
+        if self.app.inputFileName is not None and os.path.exists(self.app.inputFileName):
             self.loadSource()
         pass
 
