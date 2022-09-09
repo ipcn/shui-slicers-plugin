@@ -25,7 +25,7 @@ class PrusaGCodeParser(GCodeSource):
         return None
 
     def parse(self):
-        with open(self.fileName, "r") as g_file:
+        with open(self.fileName, "r", encoding="utf-8") as g_file:
             self.gcode=g_file.readlines()
             g_file.close()
         current_thumb=None

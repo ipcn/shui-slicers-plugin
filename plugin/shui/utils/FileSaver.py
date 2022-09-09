@@ -43,7 +43,7 @@ class FileSaver(GCodeSaver):
             try:
                 i=0
                 c=len(rows)/100
-                with open(fileName, "w") as out_file:
+                with open(fileName, "w", encoding="utf-8") as out_file:
                     for r in rows:
                         if i%100==0:
                             self.app.onProgress.emit(i/100, c)
