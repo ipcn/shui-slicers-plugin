@@ -165,13 +165,18 @@ class FileTab(UiTab):
             from .CuraGCodeParser import CuraGCodeParser
             self.parser=CuraGCodeParser()
 
+        self.bigPic.clear()
+        preview = None
         if self.parser is not None:
             preview = self.parser.getLargePreview()
             if preview is None:
                 self.parser.parse()
                 preview = self.parser.getLargePreview()
-                if preview is not None:
-                    self.bigPic.setPixmap(preview)
+        if preview is None:
+            preview = self.parser.getDefaultPreview()
+ 
+        if preview is not None:
+            self.bigPic.setPixmap(preview)
 
         if self.app.outputFileName is not None:
             self.leFileName.setText(self.app.outputFileName)

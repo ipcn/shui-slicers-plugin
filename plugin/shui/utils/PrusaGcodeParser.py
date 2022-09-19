@@ -2,12 +2,13 @@ import re
 from PIL import Image
 import base64
 from io import BytesIO
-from ..PyQt_API import (QPixmap, QImage)
+from ..PyQt_API import (Qt, QPixmap, QImage, QSize)
 from .Core import GCodeSource, PreviewGenerator, PreviewModes
 
 class PrusaGCodeParser(GCodeSource):
     large_preview=None
     small_preview=None
+    image_format=None
 
     def __init__(self, fileName):
         super().__init__()
@@ -17,14 +18,37 @@ class PrusaGCodeParser(GCodeSource):
         self.gen = PreviewGenerator()
 
     def getLargePreview(self):
+        im = None
         if self.large_preview is not None:
-            im = self.large_preview.convert("RGBA")
+            im = self.large_preview
+        elif self.small_preview is not None:
+            im = self.small_preview.resize((200, 200))
+        else:
+            return None
+
+        if im is not None:
+            im = im.convert("RGBA")
             data = im.tobytes("raw","RGBA")
             qim = QImage(data, im.size[0], im.size[1], QImage.Format.Format_ARGB32)
             return QPixmap.fromImage(qim)
         return None
 
+    def getDefaultPreview(self):
+        qpm = QPixmap(QSize(200, 200))
+        qpm.fill(Qt.GlobalColor.black)
+        return qpm
+
+    def makeImageForQOI(self, bytes):
+        import qoi
+        im = qoi.decode(bytes)
+        image = Image.fromarray(im)
+        return image
+
     def parse(self):
+        self.image_format=None
+        self.large_preview=None
+        self.small_preview=None
+
         with open(self.fileName, "r", encoding="utf-8") as g_file:
             self.gcode=g_file.readlines()
             g_file.close()
@@ -34,11 +58,20 @@ class PrusaGCodeParser(GCodeSource):
         for d in self.gcode:
             index+=1
             if current_thumb is None:
-                if d.startswith("; thumbnail begin"):
+                if d.startswith("; thumbnail"):
+                    if d.startswith("; thumbnail begin") or d.startswith("; thumbnail_PNG begin"):
+                        self.image_format="PNG"
+                    elif d.startswith("; thumbnail_JPG begin"):
+                        self.image_format="JPG"
+                    elif d.startswith("; thumbnail_QOI begin"):
+                        self.image_format="QOI"
+                    else:
+                        # unsupported preview image format
+                        continue
                     current_thumb = {"base64": "", "start_row": index - 1}
                     self.thumbs.append(current_thumb)
                     continue
-            if (d.startswith("; thumbnail end")) and (current_thumb is not None):
+            if (current_thumb is not None) and (d.startswith("; thumbnail end") or d.startswith("; thumbnail_"+self.image_format+" end")):
                 current_thumb["end_row"] = index - 1
                 current_thumb=None
                 continue
@@ -46,17 +79,23 @@ class PrusaGCodeParser(GCodeSource):
                 str=d.strip()[2:]
                 current_thumb["base64"]+=str
 
-        self.large_preview=None
-        self.small_preview=None
-
         for t in self.thumbs:
-            stream=BytesIO(base64.b64decode(t["base64"]))
-            image=Image.open(stream).convert("RGB")
-            stream.close()
-            if image.height == image.width:
+            image = None
+            try:
+                bytes = base64.b64decode(t["base64"])
+                if (self.image_format == "QOI"):
+                    image = self.makeImageForQOI(bytes)
+                else:
+                    with BytesIO(bytes) as stream:
+                        with Image.open(stream) as im:
+                            image = im.convert("RGB")
+            except:
+                continue
+
+            if image and (image.height == image.width):
                 if image.height == 200:
                     self.large_preview=image
-                if (image.height == 100) or (image.height == 50):
+                elif (image.height == 100) or (image.height == 50):
                     self.small_preview=image
 
     def dummy_filter(self, idx):

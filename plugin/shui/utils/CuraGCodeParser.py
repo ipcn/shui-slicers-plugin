@@ -3,6 +3,7 @@ from .Core import GCodeSource, PreviewGenerator, PreviewModes
 class CuraGCodeParser(GCodeSource):
     large_size = 200
     large_preview = None
+    image_format = None
     has_preview = False
     
     def __init__(self):
