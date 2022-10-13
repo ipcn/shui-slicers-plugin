@@ -21,6 +21,12 @@ class CuraGCodeParser(GCodeSource):
         from cura.Snapshot import Snapshot
         self.large_preview = Snapshot.snapshot(width = self.large_size, height = self.large_size)
 
+    def getDefaultPreview(self):
+        from ..PyQt_API import QPixmap, QSize, Qt
+        qpm = QPixmap(QSize(200, 200))
+        qpm.fill(Qt.GlobalColor.black)
+        return qpm
+
     def getLargePreview(self):
         if self.large_preview == None:
             return None
