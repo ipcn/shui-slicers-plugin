@@ -169,7 +169,7 @@ class MainWidget(QtWidgets.QDialog):
 
         self.btClose = QtWidgets.QPushButton(self)
         self.btClose.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.btClose.setText(self.app.lang["close"])
+        self.btClose.setText(self.app.getLang("close"))
 
         self.printerSelectLayout.addWidget(self.cbPrinterSelect)
         self.printerSelectLayout.addWidget(self.btConnect)
@@ -241,9 +241,9 @@ class MainWidget(QtWidgets.QDialog):
 
     def doOnConnect(self, connected):
         if connected:
-            self.btConnect.setText(self.app.lang["disconnect"])
+            self.btConnect.setText(self.app.getLang("disconnect"))
         else:
-            self.btConnect.setText(self.app.lang["connect"])
+            self.btConnect.setText(self.app.getLang("connect"))
 
     def updatePrinters(self):
         printers = self.app.config.get("printers", [])

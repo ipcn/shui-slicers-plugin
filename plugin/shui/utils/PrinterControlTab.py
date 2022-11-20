@@ -11,7 +11,7 @@ class PrinterControlTab(UiTab):
         self.uartControls=[]
         self.app.onUartRow.connect(self.addRow)
         self.app.onUartMessage.connect(self.addRow)
-        self.title = self.app.lang["printer"]
+        self.title = self.app.getLang("printer")
         self.axesControl=GCodeActionsControl(self, self.app)
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)

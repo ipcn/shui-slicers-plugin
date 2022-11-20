@@ -33,9 +33,20 @@
       "start-printing": "Запустить печать",
       "output-name": "Файл",
 
+      "prepared": "Подготовлено",
+      "success": "Успешно",
+      "connecting": "Соединение...",
+      "sent": "Передано",
+      "error": "Ошибка",
+      "error-unsupported-action": "Недопустимое действие",
+      "error-no-printers": "Нет настроенных принтеров",
+
+      "action": "Действие",
       "save-to-file": "Сохранить файл",
-      "send-to-printer": "Отправить на печать",
-      "send-to-yandex": "Сохранить на Яндекс диске"
+      "send-to-printer": "Передать на принтер",
+      "print-to-printer": "Отправить на печать",
+      "send-to-yandex": "Сохранить на Яндекс диске",
+      "auto-close": "Закрыть окно по окончании"
     }
   },
   "ua": {
@@ -81,9 +92,20 @@
       "start-printing": "Start printing",
       "output-name": "File",
 
+      "prepared": "Prepared",
+      "success": "Success",
+      "connecting": "Connecting...",
+      "sent": "Sent",
+      "error": "Error",
+      "error-unsupported-action": "Unsupported action",
+      "error-no-printers": "No printers configured",
+
+      "action": "Action",
       "save-to-file": "Save to file",
-      "send-to-printer": "Send to SHUI Wifi",
-      "send-to-yandex": "Send to Yandex disk"
+      "send-to-printer": "Load to printer",
+      "print-to-printer": "Send to printer and print",
+      "send-to-yandex": "Send to Yandex disk",
+      "auto-close": "Close window on success"
     }
   }
 }

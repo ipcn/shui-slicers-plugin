@@ -26,7 +26,7 @@ class NetworkSender(GCodeSaver):
             self.app.onProgress.emit(0, 1)
         else:
             self.app.onProgress.emit(bytes_sent, bytes_total)
-            self.app.onMessage.emit("{:d}/{:d}".format(bytes_sent, bytes_total))
+            self.app.onMessage.emit("{}: {:d}/{:d}".format(self.app.getLang("sent"), bytes_sent, bytes_total))
         pass
 
     def onSslError(self, reply, sslerror):
@@ -35,12 +35,13 @@ class NetworkSender(GCodeSaver):
 class FileSaver(GCodeSaver):
 
     def save(self, rows, filename = None):
-        from ..PyQt_API import QtWidgets
-#        options = QtWidgets.QFileDialog.Options()
-        options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
-        if fileName:
-            try:
+        state = True
+        try:
+            from ..PyQt_API import QtWidgets
+#            options = QtWidgets.QFileDialog.Options()
+            options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
+            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+            if fileName:
                 i=0
                 c=len(rows)/100
                 with open(fileName, "w", encoding="utf-8") as out_file:
@@ -51,8 +52,12 @@ class FileSaver(GCodeSaver):
                         out_file.write(r)
                     self.app.onProgress.emit(1, 1)
                     out_file.close()
-            finally:
-                self.app.onUploadFinished.emit(True)
-            pass
-
+                    self.app.onMessage.emit(self.app.getLang("success"))
+            else:
+                state = False
+        except Exception as e:
+            self.app.onMessage.emit("{0}: {1}".format(self.app.getLang("error"), str(e)))
+            print(str(e))
+            state = False
+        self.app.onUploadFinished.emit(state)
         pass

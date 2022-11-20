@@ -10,7 +10,7 @@ class TelegramTab(UiTab):
 
     def __init__(self, app):
         super().__init__(app)
-        self.title = self.app.lang["telegram"]
+        self.title = self.app.getLang("telegram")
         self.tg_config = app.config.get("telegram")
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)
@@ -30,7 +30,7 @@ class TelegramTab(UiTab):
         self.btSenb = QtWidgets.QPushButton()
         self.btSenb.setMaximumSize(QtCore.QSize(100, 16777215))
         self.btSenb.setMinimumWidth(100)
-        self.btSenb.setText(self.app.lang["send"])
+        self.btSenb.setText(self.app.getLang("send"))
         #self.btSenb.setDisabled(True)
 
 
@@ -45,7 +45,7 @@ class TelegramTab(UiTab):
         self.mainLayout.addLayout(self.sendLayout)
 
         self.btSenb.clicked.connect(self.doSend)
-        self.addRow(self.app.lang["telegram-bot-welcome"])
+        self.addRow(self.app.getLang("telegram-bot-welcome"))
 
         #self.tg=TgClient(self.app)
         #self.tg.listen()
@@ -141,7 +141,7 @@ class TelegramTab(UiTab):
         pass
 
     def doSendKeyPress(self, event):
-        if (event.key() == QtCore.Qt.Key_Enter) or (event.key() == QtCore.Qt.Key_Return):
+        if (event.key() == QtCore.Qt.Key.Key_Enter) or (event.key() == QtCore.Qt.Key.Key_Return):
             self.doSend()
             return True
         return False

@@ -6,7 +6,7 @@ class ConsoleTab(UiTab):
     def __init__(self, app):
         super().__init__(app)
         self.view_connect = True
-        self.title = self.app.lang["terminal"]
+        self.title = self.app.getLang("terminal")
         self.app.onUartRow.connect(self.addRow)
         self.app.onUartMessage.connect(self.addRow)
         self.app.onUartConnect.connect(self.onUartConnect)
@@ -32,7 +32,7 @@ class ConsoleTab(UiTab):
         self.btSenb = QtWidgets.QPushButton()
         self.btSenb.setMaximumSize(QtCore.QSize(100, 16777215))
         self.btSenb.setMinimumWidth(100)
-        self.btSenb.setText(self.app.lang["send"])
+        self.btSenb.setText(self.app.getLang("send"))
         self.btSenb.setDisabled(True)
 
 
@@ -47,7 +47,7 @@ class ConsoleTab(UiTab):
         self.mainLayout.addLayout(self.sendLayout)
 
         self.btSenb.clicked.connect(self.doSend)
-        self.addRow(self.app.lang["title"])
+        self.addRow(self.app.getLang("title"))
         pass
 
     def keyPressEvent(self, event):

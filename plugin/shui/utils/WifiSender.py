@@ -8,6 +8,11 @@ class WifiSender(NetworkSender):
     postData=None
 
     def save(self, rows, **kwargs):
+        if len(self.app.config["printers"]) <= 0:
+            self.app.onMessage.emit("{}: {}".format(self.app.getLang("error"), self.app.getLang("error-no-printers")))
+            self.app.onUploadFinished.emit(False)
+            return
+
         self.app.wifiUart.disconnect()
         try:
             rows=self.makeBytes(rows)
@@ -32,6 +37,7 @@ class WifiSender(NetworkSender):
                 request.setRawHeader(b'Content-Type', b'multipart/form-data; boundary='+post_data.boundary())
             self.postData=post_data
 
+            self.app.onMessage.emit(self.app.getLang("connecting"))
             proxy=QNetworkProxy()
             proxy.setType(QNetworkProxy.ProxyType.NoProxy)
             self.app.networkManager.setProxy(proxy)
@@ -40,21 +46,23 @@ class WifiSender(NetworkSender):
             self.reply.uploadProgress.connect(self.onUploadProgress)
             self.reply.sslErrors.connect(self.onSslError)
         except Exception as e:
-            self.app.onMessage.emit(str(e))
+            self.app.onMessage.emit("{0}: {1}".format(self.app.getLang("error"), str(e)))
             print(str(e))
             self.postData=None
             self.reply=None
-            self.app.onUploadFinished.emit(True)
+            self.app.onUploadFinished.emit(False)
         pass
 
     def handleResponse(self):
+        state = True
         er = self.reply.error()
         if er == QNetworkReply.NetworkError.NoError:
-            self.app.onMessage.emit("Success")
+            self.app.onMessage.emit(self.app.getLang("success"))
         else:
-            self.app.onMessage.emit("{0} {1}:{2}".format("Error", er, self.reply.errorString()))
+            self.app.onMessage.emit("{0} {1}:{2}".format(self.app.getLang("error"), er, self.reply.errorString()))
+            state = False
 
         self.reply=None
         self.postData=None
-        self.app.onUploadFinished.emit(True)
+        self.app.onUploadFinished.emit(state)
         pass

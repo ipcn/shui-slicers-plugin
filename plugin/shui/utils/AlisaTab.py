@@ -7,7 +7,7 @@ class AlisaTab(UiTab):
     rows=[]
     def __init__(self, app):
         super().__init__(app)
-        self.title = self.app.lang["alisa"]
+        self.title = self.app.getLang("alisa")
 
         self.teConsoleOutput = QtWidgets.QTextEdit(self)
         self.teConsoleOutput.setReadOnly(True)
@@ -17,7 +17,7 @@ class AlisaTab(UiTab):
         self.btReload = QtWidgets.QPushButton()
         self.btReload.setMaximumSize(QtCore.QSize(100, 16777215))
         self.btReload.setMinimumWidth(200)
-        self.btReload.setText(self.app.lang["reload"])
+        self.btReload.setText(self.app.getLang("reload"))
 
 
         self.mainLayout = QtWidgets.QHBoxLayout()

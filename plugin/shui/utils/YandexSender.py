@@ -34,6 +34,7 @@ class YandexSender(NetworkSender):
             ovr="overwrite=true&"
         else:
             ovr=""
+        self.app.onMessage.emit(self.app.getLang("connecting"))
         self.request = self.makeRequest(YaPhase.REQUEST_URL, "https://cloud-api.yandex.net/v1/disk/resources/upload?"+ovr+"path=app:/"+self.fileName)
         self.reply = self.app.networkManager.get(self.request)
         self.joinReply(self.reply)
@@ -55,21 +56,21 @@ class YandexSender(NetworkSender):
         er = self.reply.error()
         if er == QNetworkReply.NetworkError.NoError:
             if self.phase==YaPhase.REQUEST_URL:
-                self.app.onMessage.emit("Prepared")
+                self.app.onMessage.emit(self.app.getLang("prepared"))
                 jresp=json.loads(str(self.reply.readAll(), 'utf-8'))
                 self.doneResponse()
                 self.upload(jresp)
             elif self.phase==YaPhase.UPLOAD:
-                self.app.onMessage.emit("Success")
+                self.app.onMessage.emit(self.app.getLang("success"))
                 self.doneResponse()
                 self.app.onUploadFinished.emit(True)
         else:
             if self.reply.rawHeader(b'Content-Type')==b'application/json':
                 jresp=json.loads(str(self.reply.readAll(), 'utf-8'))
-                self.app.onMessage.emit(jresp["message"])
+                self.app.onMessage.emit("{0}: {1}".format(self.app.getLang("error"), jresp["message"]))
             else:
-                self.app.onMessage.emit("{0} {1}:{2}".format("Error", er, self.reply.errorString()))
+                self.app.onMessage.emit("{0} {1}:{2}".format(self.app.getLang("error"), er, self.reply.errorString()))
             self.doneResponse()
-            self.app.onUploadFinished.emit(True)
+            self.app.onUploadFinished.emit(False)
     pass
 
