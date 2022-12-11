@@ -84,7 +84,7 @@ class App(QtCore.QObject):
                     self.proxy.setUser(proxy_config["user"])
                 if "password" in proxy_config:
                     self.proxy.setPassword(proxy_config["password"])
-                self.proxy.setType(QNetworkProxy.HttpProxy)
+                self.proxy.setType(QNetworkProxy.ProxyType.HttpProxy)
 
         self.networkManager = QNetworkAccessManager()
         self.networkManager.setProxy(self.proxy)
