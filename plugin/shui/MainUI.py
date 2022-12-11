@@ -14,6 +14,8 @@ class App(QtCore.QObject):
     config=None
     plugin=None
     version="?.?.?"
+    name="SHUI WiFi Plugin"
+    title=None
     selectedPrinter = 0
     startMode = Core.StartMode.UNKNOWN
     outputFileName=None
@@ -59,7 +61,8 @@ class App(QtCore.QObject):
         self.plugin_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", plugin_file_name)
         self.plugin = self.loadPluginConfig()
         if self.plugin and self.plugin.get("version"):
-            self.version = self.plugin.get("version")
+            self.name = self.plugin.get("name", self.name)
+            self.version = self.plugin.get("version", self.version)
 
         self.lang_file=os.path.join(os.path.dirname(os.path.abspath(__file__)),"langs.json")
         self.langs_cfg = self.loadLang()
@@ -71,8 +74,10 @@ class App(QtCore.QObject):
                 self.lang=self.langs_cfg[inh]["lang"]
         self.lang.update(self.langs_cfg[selected]["lang"])
 
-        self.proxy=QNetworkProxy()
+        self.name = self.getLang("title", self.name)
+        self.title = "{} (v{})".format(self.name, self.version)
 
+        self.proxy=QNetworkProxy()
         if "proxy" in self.config:
             proxy_config=self.config["proxy"]
             if proxy_config["enabled"]:
@@ -92,19 +97,26 @@ class App(QtCore.QObject):
 
         pass
 
+    def selectFileDialog(self, title):
+        options = QtWidgets.QFileDialog.Option(0)
+        if not self.config.get("nativeFileDialog", True):
+            options |= QtWidgets.QFileDialog.Option.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        return fileName
+
     def selectFile(self):
-#        options = QtWidgets.QFileDialog.Options()
-        options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, "Open file", None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        fileName = self.selectFileDialog(self.getLang("open-file"))
         if fileName:
             self.inputFileName=fileName
             self.outputFileName = os.path.basename(self.inputFileName)
             return True
         return False
 
-    def getLang(self, text):
+    def getLang(self, text, default = None):
         if text and self.lang and text in self.lang:
             return self.lang[text]
+        if default is not None:
+            return default
         return text
 
     def makePrinterItem(self, p):
@@ -147,8 +159,7 @@ class MainWidget(QtWidgets.QDialog):
         super().__init__()
         self.app=app
         self.app.mainWidget = self
-        self.title = "{} (v{})".format(self.app.getLang("title"), self.app.version)
-        self.setWindowTitle(self.title)
+        self.setWindowTitle(self.app.title)
         self.setFixedWidth(500)
         self.setFixedHeight(300)
         self.mainLayout = QtWidgets.QVBoxLayout(self)

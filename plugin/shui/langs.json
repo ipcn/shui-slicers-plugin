@@ -29,6 +29,11 @@
       "printer-new": "<новый>",
       "printer-apply": "Изменить",
       "printer-delete": "Удалить",
+      "printers-options": "Настройки принтеров",
+      "plugin-options": "Настройки плагина",
+      "network-options": "Настройки сети",
+      "auto-close": "Закрыть окно по окончании",
+      "native-file-dialog": "Системное окно выбора файла",
 
       "start-printing": "Запустить печать",
       "output-name": "Файл",
@@ -42,11 +47,11 @@
       "error-no-printers": "Нет настроенных принтеров",
 
       "action": "Действие",
+      "open-file": "Открыть файл",
       "save-to-file": "Сохранить файл",
       "send-to-printer": "Передать на принтер",
       "print-to-printer": "Отправить на печать",
-      "send-to-yandex": "Сохранить на Яндекс диске",
-      "auto-close": "Закрыть окно по окончании"
+      "send-to-yandex": "Сохранить на Яндекс диске"
     }
   },
   "ua": {
@@ -57,7 +62,7 @@
   },
   "en": {
     "lang": {
-      "title": "SHUI Wifi Plugin",
+      "title": "SHUI WiFi Plugin",
       "close": "Close",
       "discard": "Discard",
       "save": "Save",
@@ -88,6 +93,11 @@
       "printer-esp32": "Esp32",
       "printer-apply": "Apply",
       "printer-delete": "Delete",
+      "printers-options": "Printers options",
+      "plugin-options": "Plugin options",
+      "network-options": "Network options",
+      "auto-close": "Close window on success",
+      "native-file-dialog": "System file selection window",
 
       "start-printing": "Start printing",
       "output-name": "File",
@@ -101,11 +111,11 @@
       "error-no-printers": "No printers configured",
 
       "action": "Action",
+      "open-file": "Open file",
       "save-to-file": "Save to file",
       "send-to-printer": "Load to printer",
       "print-to-printer": "Send to printer and print",
-      "send-to-yandex": "Send to Yandex disk",
-      "auto-close": "Close window on success"
+      "send-to-yandex": "Send to Yandex disk"
     }
   }
 }

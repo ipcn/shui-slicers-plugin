@@ -5,7 +5,7 @@ class SetupDialog(QtWidgets.QDialog):
     def __init__(self, parent, app):
         super().__init__(parent)
         self.app=app
-        self.title = self.app.getLang("setup")
+        self.title = "{} - {}".format(self.app.getLang("setup"), self.app.title)
         self.setWindowTitle(self.title)
 
         self.config = self.makeConfig()
@@ -14,52 +14,73 @@ class SetupDialog(QtWidgets.QDialog):
         self.printerIdx = 0
         self.printer = None
 
-        # languages & preview
-        self.langsLabel = QtWidgets.QLabel(self.app.getLang("language"), owner)
-        self.langsSelect = QtWidgets.QComboBox(owner)
-        self.previewLabel = QtWidgets.QLabel(self.app.getLang("preview"), owner)
-        self.previewSelect = QtWidgets.QComboBox(owner)
-        langsLayout = QtWidgets.QHBoxLayout()
-        langsLayout.addWidget(self.langsLabel)
-        langsLayout.addWidget(self.langsSelect)
-        langsLayout.addWidget(self.previewLabel)
-        langsLayout.addWidget(self.previewSelect)
-        langsLayout.addStretch()
-
         # printers list with buttons
+#        self.printersLabel = QtWidgets.QLabel(self.app.getLang("printers-list"), owner)
         self.printersList = QtWidgets.QListWidget(owner)
-        self.printerLabel = QtWidgets.QLabel(self.app.getLang("printer"), owner)
+        self.printersList.setMaximumHeight(4 * 20)
+
+        printerListLayout = QtWidgets.QVBoxLayout()
+#        printerListLayout.addWidget(self.printersLabel)
+        printerListLayout.addWidget(self.printersList)
+
+        # printer property with buttons
+#        self.printerLabel = QtWidgets.QLabel(self.app.getLang("printer-property"), owner)
         self.nameEditInput = QtWidgets.QLineEdit(owner)
         self.ipEditInput = QtWidgets.QLineEdit(owner)
         self.esp32EditCheck = QtWidgets.QCheckBox(self.app.getLang("esp32"), owner)
         self.savePrinterButton = QtWidgets.QPushButton(self.app.getLang("printer-apply"), owner)
         self.delPrinterButton = QtWidgets.QPushButton(self.app.getLang("printer-delete"), owner)
 
-        printerListLayout = QtWidgets.QVBoxLayout()
-        printerListLayout.addWidget(self.printersList)
+        printerButtonsLayout = QtWidgets.QHBoxLayout()
+        printerButtonsLayout.addWidget(self.delPrinterButton)
+        printerButtonsLayout.addWidget(self.savePrinterButton)
 
+        # edit printers box
         editPrinterLayout = QtWidgets.QVBoxLayout()
-        editPrinterLayout.addLayout(langsLayout)
+#        editPrinterLayout.addLayout(langsLayout)
         editPrinterLayout.addStretch()
-        editPrinterLayout.addWidget(self.printerLabel)
+#        editPrinterLayout.addWidget(self.printerLabel)
         editPrinterLayout.addWidget(self.nameEditInput)
         editPrinterAddrLayout = QtWidgets.QHBoxLayout()
         editPrinterAddrLayout.addWidget(self.ipEditInput)
         editPrinterAddrLayout.addWidget(self.esp32EditCheck)
         editPrinterLayout.addLayout(editPrinterAddrLayout)
-        editPrinterLayout.addWidget(self.savePrinterButton)
-        editPrinterLayout.addWidget(self.delPrinterButton)
+        editPrinterLayout.addLayout(printerButtonsLayout)
 
         printersBoxLayout = QtWidgets.QHBoxLayout()
         printersBoxLayout.addLayout(printerListLayout)
         printersBoxLayout.addLayout(editPrinterLayout)
+        printersBox =  QtWidgets.QGroupBox(self.app.getLang("printers-options"), owner)
+        printersBox.setLayout(printersBoxLayout)
 
+        # edit printers actions
         self.savePrinterButton.clicked.connect(self.onSavePrinter)
         self.delPrinterButton.clicked.connect(self.onDeletePrinter)
         self.printersList.currentRowChanged.connect(self.onSelectPrinter)
         self.nameEditInput.textChanged.connect(self.onPrinterChanged)
         self.ipEditInput.textChanged.connect(self.onPrinterChanged)
         self.esp32EditCheck.stateChanged.connect(self.onPrinterChanged)
+
+        # plugin options: languages & preview
+        langsLabel = QtWidgets.QLabel(self.app.getLang("language"), owner)
+        self.langsSelect = QtWidgets.QComboBox(owner)
+        previewLabel = QtWidgets.QLabel(self.app.getLang("preview"), owner)
+        self.previewSelect = QtWidgets.QComboBox(owner)
+        self.autoCloseCheck = QtWidgets.QCheckBox(self.app.getLang("auto-close"), owner)
+        self.autoCloseCheck.clicked.connect(self.onChangedAutoClose)
+        self.nativeFileDialogCheck = QtWidgets.QCheckBox(self.app.getLang("native-file-dialog"), owner)
+        self.nativeFileDialogCheck.clicked.connect(self.onChangedNativeFileDialog)
+
+        optsLayout = QtWidgets.QHBoxLayout()
+        optsLayout.addWidget(langsLabel)
+        optsLayout.addWidget(self.langsSelect)
+        optsLayout.addWidget(previewLabel)
+        optsLayout.addWidget(self.previewSelect)
+        optsLayout.addWidget(self.autoCloseCheck)
+        optsLayout.addWidget(self.nativeFileDialogCheck)
+        optsLayout.addStretch()
+        optsBox =  QtWidgets.QGroupBox(self.app.getLang("plugin-options"), owner)
+        optsBox.setLayout(optsLayout)
 
         # proxy
         self.proxyCheck = QtWidgets.QCheckBox(self.app.getLang("proxy"), owner)
@@ -102,6 +123,14 @@ class SetupDialog(QtWidgets.QDialog):
         telegramLayout.addWidget(self.telegramKeyEdit)
         telegramLayout.addWidget(self.telegramChatIdEdit)
 
+        # network box
+        networkLayout = QtWidgets.QVBoxLayout()
+        networkLayout.addLayout(proxyLayout)
+        networkLayout.addLayout(yandexLayout)
+        networkLayout.addLayout(telegramLayout)
+        networkBox =  QtWidgets.QGroupBox(self.app.getLang("network-options"), owner)
+        networkBox.setLayout(networkLayout)
+
         # save & discard buttons
         self.statusLabel = QtWidgets.QLabel("", owner)
         self.saveButton = QtWidgets.QPushButton(self.app.getLang("save"), owner)
@@ -117,10 +146,12 @@ class SetupDialog(QtWidgets.QDialog):
 
         # main layout 
         mainLayout=QtWidgets.QVBoxLayout()
-        mainLayout.addLayout(printersBoxLayout)
-        mainLayout.addLayout(proxyLayout)
-        mainLayout.addLayout(yandexLayout)
-        mainLayout.addLayout(telegramLayout)
+        mainLayout.addWidget(printersBox)
+        mainLayout.addWidget(optsBox)
+        mainLayout.addWidget(networkBox)
+#        mainLayout.addLayout(langsLayout)
+#        mainLayout.addLayout(printersBoxLayout)
+#        mainLayout.addLayout(networkLayout)
         mainLayout.addLayout(buttonsLayout)
         self.setLayout(mainLayout)
 
@@ -132,6 +163,8 @@ class SetupDialog(QtWidgets.QDialog):
             "printers": [],
             "language": "en",
             "preview": "small",
+            "autoClose": False,
+            "nativeFileDialog": True,
             "proxy": {"enabled":False, "host":"host.proxy.ru", "port": 8080, "user": "user", "password":"password"},
             "yandex": {"enabled":False, "key":"key", "override":False},
             "telegram": {"enabled":False, "key":"key", "chat_id":"chat_id"},
@@ -139,7 +172,7 @@ class SetupDialog(QtWidgets.QDialog):
         if self.app.config:
             for key in cfg.keys():
                 val = self.app.config.get(key)
-                if val:
+                if val is not None:
                     if key == "printers":
                         cfg[key] = [{k:p.get(k) for k in p.keys()} for p in val]
                     else:
@@ -170,6 +203,9 @@ class SetupDialog(QtWidgets.QDialog):
         except:
             pass
 
+        self.autoCloseCheck.setChecked(self.config.get("autoClose", False))
+        self.nativeFileDialogCheck.setChecked(self.config.get("nativeFileDialog", True))
+
         cfg = self.config.get("proxy")
         self.proxyCheck.setChecked(cfg.get("enabled", False))
         self.proxyHostEdit.setText(cfg.get("host", ""))
@@ -195,6 +231,8 @@ class SetupDialog(QtWidgets.QDialog):
     def saveData(self):
         self.config["language"] = self.langsSelect.currentText()
         self.config["preview"] = self.previewSelect.currentText()
+        self.config["autoClose"] = self.autoCloseCheck.isChecked()
+        self.config["nativeFileDialog"] = self.nativeFileDialogCheck.isChecked()
 
         self.config["proxy"] = {
             "enabled": self.proxyCheck.isChecked(),
@@ -323,3 +361,9 @@ class SetupDialog(QtWidgets.QDialog):
         enabled = self.telegramCheck.isChecked()
         self.telegramKeyEdit.setEnabled(enabled)
         self.telegramChatIdEdit.setEnabled(enabled)
+
+    def onChangedAutoClose(self):
+        self.autoClose = self.autoCloseCheck.isChecked()
+
+    def onChangedNativeFileDialog(self):
+        self.nativeFileDialog = self.nativeFileDialogCheck.isChecked()

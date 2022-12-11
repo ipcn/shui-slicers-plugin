@@ -21,7 +21,7 @@ class FileTab(UiTab):
 #        self.cbStartPrinting.setChecked(True)
 
         self.cbAutoClose = QtWidgets.QCheckBox(self.app.getLang("auto-close"))
-        self.cbAutoClose.setChecked(False)
+        self.cbAutoClose.setChecked(self.app.config.get("auto-close", False))
 
         self.leFileName = QtWidgets.QLineEdit()
         self.leFileName.setMaxLength(64)

@@ -37,10 +37,7 @@ class FileSaver(GCodeSaver):
     def save(self, rows, filename = None):
         state = True
         try:
-            from ..PyQt_API import QtWidgets
-#            options = QtWidgets.QFileDialog.Options()
-            options = QtWidgets.QFileDialog.Option.DontUseNativeDialog
-            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save to file", filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+            fileName = self.app.selectFileDialog(self.app.getLang("save-to-file"))
             if fileName:
                 i=0
                 c=len(rows)/100
