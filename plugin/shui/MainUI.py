@@ -97,11 +97,14 @@ class App(QtCore.QObject):
 
         pass
 
-    def selectFileDialog(self, title):
+    def selectFileDialog(self, title, filename=False):
         options = QtWidgets.QFileDialog.Option(0)
         if not self.config.get("nativeFileDialog", True):
             options |= QtWidgets.QFileDialog.Option.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        if filename:
+            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        else:
+            fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
         return fileName
 
     def selectFile(self):

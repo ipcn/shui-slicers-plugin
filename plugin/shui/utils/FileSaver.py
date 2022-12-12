@@ -37,7 +37,7 @@ class FileSaver(GCodeSaver):
     def save(self, rows, filename = None):
         state = True
         try:
-            fileName = self.app.selectFileDialog(self.app.getLang("save-to-file"))
+            fileName = self.app.selectFileDialog(self.app.getLang("save-to-file"), filename)
             if fileName:
                 i=0
                 c=len(rows)/100
