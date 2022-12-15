@@ -24,9 +24,9 @@ class NetOutputDevice(OutputDevice):
         try:
             self.writeStarted.emit(self)
             fn=Application.getInstance().getPrintInformation().jobName.strip()
-            i=fn.find("_")
-            if i!=-1:
-              fn=fn[i+1:]
+#            i=fn.find("_")
+#            if i!=-1:
+#              fn=fn[i+1:]
             self.w=cura_application(output_file_name=fn+".GCO")
             pass
         except Exception as e:
