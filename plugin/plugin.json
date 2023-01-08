@@ -7,7 +7,8 @@
     "supported_sdk_versions": [
         "7.8.0",
         "8.0.0",
-        "8.1.0"
+        "8.1.0",
+        "8.2.0"
     ],
     "i18n-catalog": "cura"
 }
