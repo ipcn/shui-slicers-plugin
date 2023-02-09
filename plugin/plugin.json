@@ -1,7 +1,7 @@
 {
     "name": "SHUI Plugin Connection",
     "author": "Vyacheslav Shubin",
-    "version": "22.12.11",
+    "version": "23.02.09",
     "description": "SHUI Uploader",
     "api": 5,
     "supported_sdk_versions": [
