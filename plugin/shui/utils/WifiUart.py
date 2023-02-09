@@ -15,7 +15,10 @@ class ConnectionThread(QtCore.QThread):
         message=message.replace('|', '\n')
         message=message+"\n\r"
         if self.sock:
-            self.sock.send(message.encode())
+            try:
+                self.sock.send(message.encode())
+            except Exception as e:
+                self.app.onUartMessage.emit("Error: "+str(e))
         pass
 
     def notifyConnect(self, c):
@@ -25,9 +28,11 @@ class ConnectionThread(QtCore.QThread):
 
     def disconnect(self):
         if self.isRunning():
+            self.exit(0)
+        if self.connected:
             self.notifyConnect(False)
             self.sock.close()
-            self.exit(0)
+#            self.sock=None
         pass
 
     def connect(self, address):
@@ -57,5 +62,5 @@ class ConnectionThread(QtCore.QThread):
         except Exception as e:
             if self.connected or not reading:
                 self.app.onUartMessage.emit("Error: "+str(e))
-                self.notifyConnect(False)
+        self.disconnect()
         pass

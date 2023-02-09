@@ -77,4 +77,7 @@ class ConsoleTab(UiTab):
 
     def doSendKeyPress(self, event):
         if (event.key() == QtCore.Qt.Key.Key_Enter) or (event.key() == QtCore.Qt.Key.Key_Return):
-            self.doSend()
+            if (self.app.wifiUart.connected):
+                self.doSend()
+        pass
+
