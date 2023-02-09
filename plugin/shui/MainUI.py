@@ -44,6 +44,7 @@ class App(QtCore.QObject):
                 self.inputFileName=sys.argv[1]
             pass
         elif appStartMode==Core.StartMode.CURA:
+            self.inputFileName = "shui_cura.gcode"
             if "output_file_name" in kwargs:
                 self.outputFileName = kwargs["output_file_name"]
 
@@ -77,6 +78,11 @@ class App(QtCore.QObject):
         self.name = self.getLang("title", self.name)
         self.title = "{} (v{})".format(self.name, self.version)
 
+        self.selectedPrinter = self.config.get("selectedPrinter", 0)
+        printers = self.config.get("printers")
+        if not printers or self.selectedPrinter < 0 or self.selectedPrinter >= len(printers):
+            self.selectedPrinter = 0
+
         self.proxy=QNetworkProxy()
         if "proxy" in self.config:
             proxy_config=self.config["proxy"]
@@ -97,15 +103,15 @@ class App(QtCore.QObject):
 
         pass
 
-    def selectFileDialog(self, title, filename=False):
+    def selectFileDialog(self, title, filename=None):
         options = QtWidgets.QFileDialog.Option(0)
         if not self.config.get("nativeFileDialog", True):
             options |= QtWidgets.QFileDialog.Option.DontUseNativeDialog
         if filename:
-            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+            filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
         else:
-            fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, None, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
-        return fileName
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+        return filename
 
     def selectFile(self):
         fileName = self.selectFileDialog(self.getLang("open-file"))
@@ -269,13 +275,15 @@ class MainWidget(QtWidgets.QDialog):
             idx = 0
         if (idx >= len(printers)):
             idx = len(printers) - 1
-        self.app.selectedPrinter = idx
         self.cbPrinterSelect.setCurrentIndex(idx)
+        self.printerChanged(idx)
         pass
 
     def printerChanged(self, index):
         if index >= 0:
             self.app.selectedPrinter = index
+            self.app.config["selectedPrinter"] = index
+            self.app.saveConfig()
         pass
 
 def makeForm(startMode, **kwargs):

@@ -84,8 +84,7 @@ class FileTab(UiTab):
 
         self.startPrint = False
 
-        if self.app.inputFileName is not None and os.path.exists(self.app.inputFileName):
-            self.loadSource()
+        self.loadSource()
         pass
 
     def makeActionsMap(self):
@@ -144,6 +143,7 @@ class FileTab(UiTab):
             else:
                 self.onMessage("---")
                 action()
+        pass
 
     def onProgress(self, current, max):
         self.progress.setMaximum(int(max))
@@ -162,8 +162,10 @@ class FileTab(UiTab):
         try:
             self.onProgress(0, 1)
             filename = self.leFileName.text()
-            if self.app.inputFileName:
+            dir = self.app.config.get("saveFileDir")
+            if not dir and self.app.inputFileName:
                 dir = os.path.dirname(os.path.abspath(self.app.inputFileName))
+            if dir:
                 filename = os.path.join(dir, filename)
             preview_mode = self.app.config.get("preview", "small")
             from .FileSaver import FileSaver
@@ -211,6 +213,8 @@ class FileTab(UiTab):
 
     def loadSource(self):
         if self.app.startMode==StartMode.PRUSA or self.app.startMode==StartMode.STANDALONE:
+            if self.app.inputFileName is None or not os.path.exists(self.app.inputFileName):
+                return
             from .PrusaGcodeParser import PrusaGCodeParser
             self.parser=PrusaGCodeParser(self.app.inputFileName)
         elif self.app.startMode==StartMode.CURA:

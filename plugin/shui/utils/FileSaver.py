@@ -39,6 +39,11 @@ class FileSaver(GCodeSaver):
         try:
             fileName = self.app.selectFileDialog(self.app.getLang("save-to-file"), filename)
             if fileName:
+                import os
+                dir = os.path.dirname(fileName)
+                if dir:
+                    self.app.config["saveFileDir"] = dir
+                    self.app.saveConfig()
                 i=0
                 c=len(rows)/100
                 with open(fileName, "w", encoding="utf-8") as out_file:
