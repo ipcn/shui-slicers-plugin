@@ -255,7 +255,7 @@ class MainWidget(QtWidgets.QDialog):
     def doConnect(self):
         if self.app.wifiUart.connected:
             self.app.wifiUart.disconnect()
-        else:
+        elif self.app.config["printers"] and self.app.selectedPrinter >= 0:
             self.app.wifiUart.connect(self.app.config["printers"][self.app.selectedPrinter]["ip"])
         pass
 
