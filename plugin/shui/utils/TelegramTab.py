@@ -51,53 +51,64 @@ class TelegramTab(UiTab):
         #self.tg.listen()
         #self.tg.onMessage.connect(self.onMessage)
         self.pooling()
-        pass
 
     def pooling(self):
-        import json
-        tg_url="https://api.telegram.org/bot"+self.tg_config.get("key")+"/getUpdates"
-        self.req=QNetworkRequest(QtCore.QUrl(tg_url))
-        self.req.setRawHeader(b'Content-Type', b'application/json')
-        post_data=json.dumps(self.pooling_data).encode("utf-8")
-        self.reply = self.app.networkManager.post(self.req, post_data)
-        def handleResponse():
-            er = self.reply.error()
-            if er == QNetworkReply.NetworkError.NoError:
-                jresp=json.loads(bytes(self.reply.readAll()).decode())
-                for result_json in jresp["result"]:
-                    self.pooling_data["offset"]=result_json["update_id"]+1
-                    if "message" in result_json:
-                        self.onMessage(result_json["message"])
-            self.req=None
-            self.reply=None
-            self.pooling()
-            pass
+        tg_key = self.tg_config.get("key")
+        if not tg_key:
+            return
+        try:
+            import json
+            tg_url="https://api.telegram.org/bot"+tg_key+"/getUpdates"
+            self.req=QNetworkRequest(QtCore.QUrl(tg_url))
+            self.req.setRawHeader(b'Content-Type', b'application/json')
+            post_data=json.dumps(self.pooling_data).encode("utf-8")
+            self.reply = self.app.networkManager.post(self.req, post_data)
+            def handleResponse():
+                er = self.reply.error()
+                if er == QNetworkReply.NetworkError.NoError:
+                    jresp=json.loads(bytes(self.reply.readAll()).decode())
+                    for result_json in jresp["result"]:
+                        self.pooling_data["offset"]=result_json["update_id"]+1
+                        if "message" in result_json:
+                            self.onMessage(result_json["message"])
+                self.req=None
+                self.reply=None
+                self.pooling()
+                pass
 
-        self.reply.finished.connect(handleResponse)
-        self.reply.sslErrors.connect(self.onSslError)
+            self.reply.finished.connect(handleResponse)
+            self.reply.sslErrors.connect(self.onSslError)
+        except Exception as err:
+            self.showMessage("<error>", str(err))
         pass
 
     def onSslError(self, reply, sslerror):
         pass
 
     def onMessage(self, message):
-        if (message["text"]):
+        text = message.get("text")
+        if text:
+            name="<chat>"
             sender_chat=message.get("sender_chat")
             if sender_chat!=None:
-                name=sender_chat["title"]
+                name=sender_chat.get("title")
             else:
-                name=None
-                fn=message["from"].get("first_name")
-                ln=message["from"].get("last_name")
-                if fn:
-                    name=fn
-                if ln:
-                    if name:
-                        name=name+" "
-                    name=name+ln
-            self.addRow("{0}: {1}".format(name, message["text"]))
+                name_from=message.get("from")
+                if name_from:
+                    fn=name_from.get("first_name")
+                    ln=name_from.get("last_name")
+                    if fn:
+                        name=fn
+                    if ln:
+                        if name:
+                            name=name+" "
+                        name=name+ln
+            self.showMessage(name, text)
         pass
 
+    def showMessage(self, name, text):
+        self.addRow("{0}: {1}".format(name, text))
+    
     def start(self):
         pass
 
