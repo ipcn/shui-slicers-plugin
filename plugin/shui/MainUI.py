@@ -103,23 +103,32 @@ class App(QtCore.QObject):
 
         pass
 
-    def selectFileDialog(self, title, filename=None):
+    def selectFileDialog(self, title, dir=None, filename=None, pattern=None):
         options = QtWidgets.QFileDialog.Option(0)
         if not self.config.get("nativeFileDialog", True):
             options |= QtWidgets.QFileDialog.Option.DontUseNativeDialog
+        if not pattern:
+            pattern = "GCODE Files (*.gcode *.gco);;All Files (*)"
         if filename:
-            filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+            filename, _ = QtWidgets.QFileDialog.getSaveFileName(self.mainWidget, title, filename, pattern, options=options)
         else:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, filename, "GCODE Files (*.gcode *.gco);;All Files (*)", options=options)
+            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.mainWidget, title, dir, pattern, options=options)
         return filename
 
-    def selectFile(self):
-        fileName = self.selectFileDialog(self.getLang("open-file"))
+    def selectFile(self, dir=None):
+        fileName = self.selectFileDialog(self.getLang("open-file"), dir)
         if fileName:
             self.inputFileName=fileName
             self.outputFileName = os.path.basename(self.inputFileName)
             return True
         return False
+
+    def saveFileDir(self, key, dir, filename):
+        if not dir and filename:
+            dir = os.path.dirname(os.path.abspath(filename))
+        if dir:
+            self.config[key] = dir
+            self.saveConfig()
 
     def getLang(self, text, default = None):
         if text and self.lang and text in self.lang:
@@ -169,8 +178,10 @@ class MainWidget(QtWidgets.QDialog):
         self.app=app
         self.app.mainWidget = self
         self.setWindowTitle(self.app.title)
-        self.setFixedWidth(500)
-        self.setFixedHeight(300)
+        self.setBaseSize(500, 300)
+#        self.setFixedSize(500, 300)
+        self.setSizeGripEnabled(False)
+
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.mainLayout.setContentsMargins(2, 2, 2, 2)
         self.mainLayout.setSpacing(0)

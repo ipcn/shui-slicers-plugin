@@ -27,11 +27,10 @@ class NetOutputDevice(OutputDevice):
 #            i=fn.find("_")
 #            if i!=-1:
 #              fn=fn[i+1:]
-            self.w=cura_application(output_file_name=fn+".GCO")
+            self.w=cura_application(output_file_name=fn+".gcode")
             pass
         except Exception as e:
-            Logger.log("w", "show widget error")
-            Logger.log("w", str(e))
+            Logger.log("e", "SHUI error: " + str(e))
             pass
 
 class ShuiPlugin(OutputDevicePlugin):

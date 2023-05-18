@@ -37,16 +37,18 @@ class FileSaver(GCodeSaver):
     def save(self, rows, filename = None):
         state = True
         try:
-            fileName = self.app.selectFileDialog(self.app.getLang("save-to-file"), filename)
-            if fileName:
-                import os
-                dir = os.path.dirname(fileName)
-                if dir:
-                    self.app.config["saveFileDir"] = dir
-                    self.app.saveConfig()
+            import os
+            dir = self.app.config.get("saveFileDir")
+            if not dir and self.app.inputFileName:
+                dir = os.path.dirname(os.path.abspath(self.app.inputFileName))
+            if dir:
+                filename = os.path.join(dir, filename)
+            filename = self.app.selectFileDialog(self.app.getLang("save-to-file"), dir, filename)
+            if filename:
+                self.app.saveFileDir("saveFileDir", None, filename)
                 i=0
                 c=len(rows)/100
-                with open(fileName, "w", encoding="utf-8") as out_file:
+                with open(filename, "w", encoding="utf-8") as out_file:
                     for r in rows:
                         if i%100==0:
                             self.app.onProgress.emit(i/100, c)

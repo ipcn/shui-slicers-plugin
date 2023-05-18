@@ -66,18 +66,18 @@ class SetupDialog(QtWidgets.QDialog):
         self.langsSelect = QtWidgets.QComboBox(owner)
         previewLabel = QtWidgets.QLabel(self.app.getLang("preview"), owner)
         self.previewSelect = QtWidgets.QComboBox(owner)
+        self.previewAspectRatioCheck = QtWidgets.QCheckBox(self.app.getLang("preview-aspect-ratio"), owner)
+        self.previewAspectRatioCheck.clicked.connect(self.onChangedPreviewAspectRatio)
         self.autoCloseCheck = QtWidgets.QCheckBox(self.app.getLang("auto-close"), owner)
         self.autoCloseCheck.clicked.connect(self.onChangedAutoClose)
-        self.nativeFileDialogCheck = QtWidgets.QCheckBox(self.app.getLang("native-file-dialog"), owner)
-        self.nativeFileDialogCheck.clicked.connect(self.onChangedNativeFileDialog)
 
         optsLayout = QtWidgets.QHBoxLayout()
         optsLayout.addWidget(langsLabel)
         optsLayout.addWidget(self.langsSelect)
         optsLayout.addWidget(previewLabel)
         optsLayout.addWidget(self.previewSelect)
+        optsLayout.addWidget(self.previewAspectRatioCheck)
         optsLayout.addWidget(self.autoCloseCheck)
-        optsLayout.addWidget(self.nativeFileDialogCheck)
         optsLayout.addStretch()
         optsBox =  QtWidgets.QGroupBox(self.app.getLang("plugin-options"), owner)
         optsBox.setLayout(optsLayout)
@@ -165,6 +165,7 @@ class SetupDialog(QtWidgets.QDialog):
             "preview": "small",
             "autoClose": False,
             "nativeFileDialog": True,
+            "keepPreviewAspectRatio": True,
             "proxy": {"enabled":False, "host":"host.proxy.ru", "port": 8080, "user": "user", "password":"password"},
             "yandex": {"enabled":False, "key":"key", "override":False},
             "telegram": {"enabled":False, "key":"key", "chat_id":"chat_id"},
@@ -204,7 +205,7 @@ class SetupDialog(QtWidgets.QDialog):
             pass
 
         self.autoCloseCheck.setChecked(self.config.get("autoClose", False))
-        self.nativeFileDialogCheck.setChecked(self.config.get("nativeFileDialog", True))
+        self.previewAspectRatioCheck.setChecked(self.config.get("keepPreviewAspectRatio", True))
 
         cfg = self.config.get("proxy")
         self.proxyCheck.setChecked(cfg.get("enabled", False))
@@ -232,7 +233,7 @@ class SetupDialog(QtWidgets.QDialog):
         self.config["language"] = self.langsSelect.currentText()
         self.config["preview"] = self.previewSelect.currentText()
         self.config["autoClose"] = self.autoCloseCheck.isChecked()
-        self.config["nativeFileDialog"] = self.nativeFileDialogCheck.isChecked()
+        self.config["keepPreviewAspectRatio"] = self.previewAspectRatioCheck.isChecked()
 
         self.config["proxy"] = {
             "enabled": self.proxyCheck.isChecked(),
@@ -365,5 +366,5 @@ class SetupDialog(QtWidgets.QDialog):
     def onChangedAutoClose(self):
         self.autoClose = self.autoCloseCheck.isChecked()
 
-    def onChangedNativeFileDialog(self):
-        self.nativeFileDialog = self.nativeFileDialogCheck.isChecked()
+    def onChangedPreviewAspectRatio(self):
+        self.previewAspectRatio = self.previewAspectRatioCheck.isChecked()

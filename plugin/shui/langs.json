@@ -14,6 +14,10 @@
       "terminate": "Прервать",
       "ok": "OK",
 
+      "load-preview": "Превью из",
+      "from-file": "файла...",
+      "from-clipboard": "буфер обмена",
+
       "setup": "Настройка",
       "file": "Файл",
       "terminal": "Терминал",
@@ -34,6 +38,7 @@
       "network-options": "Настройки сети",
       "auto-close": "Закрыть окно по окончании",
       "native-file-dialog": "Системное окно выбора файла",
+      "preview-aspect-ratio": "Сохранять пропорции",
 
       "start-printing": "Запустить печать",
       "output-name": "Файл",
@@ -75,6 +80,10 @@
       "terminate": "Terminate",
       "ok": "OK",
 
+      "load-preview": "Preview from",
+      "from-file": "file...",
+      "from-clipboard": "clipboard",
+
       "setup": "Setup",
       "file": "File",
       "terminal": "Terminal",
@@ -98,6 +107,7 @@
       "network-options": "Network options",
       "auto-close": "Close window on success",
       "native-file-dialog": "System file selection window",
+      "preview-aspect-ratio": "Preserve aspect ratio",
 
       "start-printing": "Start printing",
       "output-name": "File",
