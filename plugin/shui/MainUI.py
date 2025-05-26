@@ -48,9 +48,9 @@ class App(QtCore.QObject):
             if "output_file_name" in kwargs:
                 self.outputFileName = kwargs["output_file_name"]
 
-        if self.inputFileName is None:
+        if not self.inputFileName:
             self.inputFileName = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..", "shui_prusa.gcode")
-        if self.outputFileName is None:
+        if not self.outputFileName:
             self.outputFileName = os.path.basename(self.inputFileName)
         self.wifiUart = ConnectionThread(self)
 
