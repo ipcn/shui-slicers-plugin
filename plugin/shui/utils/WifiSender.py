@@ -16,6 +16,12 @@ class WifiSender(NetworkSender):
         self.app.wifiUart.disconnect()
         try:
             rows=self.makeBytes(rows)
+            # calculate simple crc
+            crc = 0
+            for ch in rows:
+                crc = crc ^ ch
+            crc = crc & 0xFF
+
             ip = self.app.config["printers"][self.app.selectedPrinter]["ip"]
             esp32 = self.app.config["printers"][self.app.selectedPrinter]["esp32"]
             request = QNetworkRequest(QtCore.QUrl("http://%s/upload" % ip))
@@ -27,6 +33,7 @@ class WifiSender(NetworkSender):
                 post_data = rows
                 request.setRawHeader(b'Content-Type', b'application/octet-stream')
                 request.setRawHeader(b'File-Name', self.fileName.encode())
+                request.setRawHeader(b'CRC', str(crc).encode())
             else:
                 post_data = QHttpMultiPart(QHttpMultiPart.ContentType.FormDataType)
                 part = QHttpPart()
@@ -35,6 +42,7 @@ class WifiSender(NetworkSender):
                 part.setBody(rows)
                 post_data.append(part)
                 request.setRawHeader(b'Content-Type', b'multipart/form-data; boundary='+post_data.boundary())
+                request.setRawHeader(b'CRC', str(crc).encode())
             self.postData=post_data
 
             self.app.onMessage.emit(self.app.getLang("connecting"))
