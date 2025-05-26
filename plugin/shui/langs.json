@@ -12,6 +12,7 @@
       "disconnect": "Отключить",
       "preview": "Превью",
       "terminate": "Прервать",
+      "run": "Выполнить",
       "ok": "OK",
 
       "load-preview": "Превью из",
@@ -78,6 +79,7 @@
       "disconnect": "Disconnect",
       "preview": "Preview",
       "terminate": "Terminate",
+      "run": "Run",
       "ok": "OK",
 
       "load-preview": "Preview from",

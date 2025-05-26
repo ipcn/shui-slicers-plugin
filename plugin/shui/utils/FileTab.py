@@ -53,7 +53,7 @@ class FileTab(UiTab):
         self.progress_label=QtWidgets.QLabel()
         self.progress_label.setWordWrap(True)
         self.progress_label.setText("---")
-        self.okButton = QtWidgets.QPushButton(self.app.getLang("ok"))
+        self.okButton = QtWidgets.QPushButton(self.app.getLang("run"))
 
 	    # left area layout
         previewButtons = QtWidgets.QHBoxLayout()
@@ -238,7 +238,7 @@ class FileTab(UiTab):
         if locked:
             self.okButton.setText(self.app.getLang("terminate"))
         else:
-            self.okButton.setText(self.app.getLang("ok"))
+            self.okButton.setText(self.app.getLang("run"))
         self.locked=locked
         pass
 
