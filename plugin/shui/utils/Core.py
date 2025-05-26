@@ -54,11 +54,33 @@ class GCodeSource:
 #        format = "QOI"
 #        qimg = QImage()
 #        qimg.loadFromData(data, format)
-        import qoi
-        im = qoi.decode(data)
+#        import qoi
+#        im = qoi.decode(data)
+#        print(im)
 #        format = QImage.Format.Format_ARGB32
-        format = QImage.Format.Format_RGBA8888
-        qimg = QImage(im, im.shape[0], im.shape[1], format)
+#        format = QImage.Format.Format_RGBA8888
+#        qimg = QImage(im, im.shape[0], im.shape[1], format)
+
+        qimg = None
+        from .qoi.qoi_reader import QOIReader
+        reader = QOIReader(data)
+        if reader and reader.header and reader.header.width and reader.header.height:
+            arr = reader.asArray()
+            if arr:
+#                chans = int.from_bytes(reader.header.channels, "big")
+#                print("reader.header.channels", chans) 
+#                print("reader.header.width", reader.header.width) 
+#                print("reader.header.height", reader.header.height) 
+#                print("reader.header.count", reader.header.width * reader.header.height) 
+#                print("reader.header.size", reader.header.width * reader.header.height * chans) 
+                im = []
+                for i in range(0, len(arr)):
+                    t = arr[i]
+                    for j in range(0, len(t)):
+                        im.append(t[j])
+                im = bytes(im)
+                format = QImage.Format.Format_RGBA8888
+                qimg = QImage(im, reader.header.width, reader.header.height, format)
         return qimg
 
     def makeImageForQOI_PIL(self, data):
@@ -168,7 +190,7 @@ class GCodeSource:
                         qimg = None
             except Exception as e:
                 print("Exception in creating preview:", str(e))
-#                raise
+                raise
                 continue
 
             # save largest image in preview
